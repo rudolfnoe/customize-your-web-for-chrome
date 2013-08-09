@@ -1,0 +1,26 @@
+{
+  "name": "Customize your web",
+  "version": "0.1",
+
+  "permissions": [
+    "storage",
+    "tabs",
+    "<all_urls>"
+  ],
+
+  "options_page": "optionpage/options.html",
+  
+  "background": {
+  	"scripts":[
+  		"lib/custom/lang/Assert.js",
+  		"lib/custom/lang/ArrayUtils.js",
+  		"lib/custom/lang/ObjectUtils.js",
+  		"lib/custom/lang/collections/ArrayList.js",
+  		"background/UUIDGenerator.js",
+  		"background/CywConfig.js",
+  		"background/MainController.js"],
+  	"persistent": true
+  },
+
+  "manifest_version": 2
+}

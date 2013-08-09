@@ -1,0 +1,51 @@
+<html>
+<head>
+<script type="text/javascript" src="../lib/jquery/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="OptionsPageController.js"></script>
+<script type="text/javascript" src="../common/Script.js"></script>
+<head>
+<body>
+<h1>Customize your web</h1>
+<!-- Main layout -->
+<table>
+	<tr>
+		<td style="vertical-align: top">
+			<!-- Script table -->
+			<table id="scripts">
+				<tr">
+					<th></th>
+					<th>Name</th>
+					<th></th>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<!-- Script Formular -->
+			<table id="scriptForm">
+				<tr>
+					<td>
+						Script Name <br/>
+						<input id="scriptName" type="text" size="110"/>
+						<input id="uuid" type="hidden"/>
+					</td>
+				</tr>
+				<tr> 
+					<td>
+						Include URLs<br/>
+						<textarea id="includeUrls" rows="4" cols="100"></textarea>
+					<td>
+				<tr>
+				<tr> 
+					<td>
+						Onload Javascrip<br/>
+						<textarea id="onloadJSCode" rows="10" cols="100"></textarea>
+					<td>
+				<tr>
+				<tr>
+					<td>
+						<button id="saveBtn">Save</button>
+			</table>
+	</tr>
+</table>
+</body>
+</html>
