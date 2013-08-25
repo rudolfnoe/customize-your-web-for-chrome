@@ -2,7 +2,9 @@
 <head>
 <script type="text/javascript" src="../lib/jquery/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="OptionsPageController.js"></script>
-<script type="text/javascript" src="../common/Script.js"></script>
+<script type="text/javascript" src="../common/utils/UrlUtils.js"></script>
+<script type="text/javascript" src="../datamodel/TargetWinDefinition.js"></script>
+<script type="text/javascript" src="../datamodel/Script.js"></script>
 <head>
 <body>
 <h1>Customize your web</h1>
@@ -26,7 +28,10 @@
 					<td>
 						Script Name <br/>
 						<input id="scriptName" type="text" size="110"/>
-						<input id="uuid" type="hidden"/>
+					</td>
+					<td>
+					    Uuid <br/>
+					    <input id="uuid" type="text" readonly = "true" tabindex="-1"/>
 					</td>
 				</tr>
 				<tr> 

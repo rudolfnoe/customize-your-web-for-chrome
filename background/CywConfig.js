@@ -1,7 +1,7 @@
 CywConfig = {
    //Flag indicating wether performance log is activated
    perfLogActive: false,
-   scripts: new ArrayList(),
+   scripts: [],
    //To detect from where observer notifcation comse from
    id: (new Date()).getTime(),
    
@@ -12,10 +12,11 @@ CywConfig = {
    
    deleteScript: function(scriptUuid){
    	var found = false;
-   	for(var i=0; i<this.scripts.size();i++){
-   		if(this.scripts.get(i).uuid==scriptUuid){
-   			this.scripts.removeAtIndex(i);
+   	for(var i=0; i<this.scripts.length;i++){
+   		if(this.scripts[i].uuid==scriptUuid){
+   			this.scripts = this.scripts.removeAtIndex(i);
    			var found = true;
+            break;
    		}
    	};
    	if(!found){
@@ -30,8 +31,8 @@ CywConfig = {
    getActiveScriptsForUrl: function(url){
       var scripts = this.getScripts()
       var result = new Array()
-      for (var i = 0; i < scripts.size(); i++) {
-         var script = scripts.get(i)
+      for (var i = 0; i < scripts.length; i++) {
+         var script = scripts[i]
          if(script.matchUrl(url) && !script.isDisabled()){
             result.push(this.cloneScript(script))
          }
@@ -42,8 +43,8 @@ CywConfig = {
    
    //Checks wether script with given guiId already exists
    getScriptByUUIId: function(uuid){
-      for (var i = 0; i < this.scripts.size(); i++) {
-         var script = this.scripts.get(i)
+      for (var i = 0; i < this.scripts.length; i++) {
+         var script = this.scripts[i]
          if(script.uuid==uuid){
             return script
          }
@@ -63,7 +64,7 @@ CywConfig = {
       var containsCompareFct = function(objSearched, elementFromList){
          return objSearched.getId() == elementFromList.getId();
       }
-      for (var scriptIndex = 0; scriptIndex < this.scripts.size(); scriptIndex++) {
+      for (var scriptIndex = 0; scriptIndex < this.scripts.length; scriptIndex++) {
          for (var urlIndex = 0; urlIndex < urls.length; urlIndex++) {
             var script = this.scripts.get(scriptIndex)
              
@@ -86,19 +87,20 @@ CywConfig = {
    	console.log('CywConfig.init');
    	chrome.storage.local.get('scripts', function(storageObj){
    		self.scripts = new ArrayList(storageObj.scripts);
-   		console.log('Scripts count: '+ self.scripts.size());
+   		console.log('Scripts count: '+ self.scripts.length);
    	});
    },
    
    saveScript: function(aScript){
    	if(aScript.uuid == null || aScript.uuid.length == 0){
    		aScript.uuid = UUIDGenerator.randomUUID();
-   		this.scripts.add(aScript);
+   		this.scripts.push(aScript);
    	}else{
-   		for(var i=0; i<this.scripts.size();i++){
-   			var oldScript = this.scripts.get(i);
+   		for(var i=0; i<this.scripts.length;i++){
+   			var oldScript = this.scripts[i];
    			if (oldScript.uuid == aScript.uuid){
-   				this.scripts.replace(aScript, oldScript);
+   				this.scripts[i] = aScript;
+               break;
    			}
    		}
    	}
@@ -106,7 +108,7 @@ CywConfig = {
    },
    
    saveScripts: function(){
-   	chrome.storage.local.set({'scripts': this.scripts.toArray()}, function() {
+   	chrome.storage.local.set({'scripts': this.scripts}, function() {
   	    // Notify that we saved.
   	    console.log('Scripts successfully saved');
   	});   
