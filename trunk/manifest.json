@@ -12,13 +12,17 @@
   
   "background": {
   	"scripts":[
+      "lib/jquery/jquery-1.9.1.js",
   		"lib/custom/lang/Assert.js",
   		"lib/custom/lang/ArrayUtils.js",
+      "lib/custom/lang/Array.js",
   		"lib/custom/lang/ObjectUtils.js",
-  		"lib/custom/lang/collections/ArrayList.js",
+      "common/utils/UrlUtils.js",
   		"background/UUIDGenerator.js",
   		"background/CywConfig.js",
-  		"background/MainController.js"],
+  		"background/MainController.js",
+      "datamodel/Script.js",
+      "datamodel/TargetWinDefinition.js"],
   	"persistent": true
   },
 
