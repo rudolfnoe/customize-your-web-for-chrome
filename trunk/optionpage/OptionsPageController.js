@@ -7,7 +7,7 @@ OptionPageController = {
 		this.initScriptsTable();
 	},
 	
-	createScriptFromFrom: function(){
+	createScriptFromForm: function(){
 		var script = new Script();
       script.setUuid($('#uuid').val());
       script.setName($('#scriptName').val());
@@ -22,7 +22,7 @@ OptionPageController = {
 		$('#uuid').val(script.getUuid());
 		$('#scriptName').val(script.getName());
 		$('#includeUrls').val(script.getIncludeUrlPatternString());
-		$('#onloadJSCode').val(script.setOnloadJavaScript());
+		$('#onloadJSCode').val(script.getOnloadJavaScript());
 	},
 	
 	init: function(){
@@ -45,7 +45,7 @@ OptionPageController = {
 	},
 	
 	saveScript: function(){
-		this.cywConfig.saveScript(this.createScriptFromFrom());
+		this.cywConfig.saveScript(this.createScriptFromForm());
 		this.initScriptsTable();
 		$('#scriptForm input,#scriptForm textarea').val('');
 	}

@@ -9,7 +9,7 @@ function TargetWinDefinition(includeUrlPatternString, excludeUrlPatternString){
 }
 
 TargetWinDefinition.createFromJson = function(jsonObj){
-   var newTargetWinDefintion = $.extend((new TargetWinDefinition()), jsonOjb);
+   var newTargetWinDefintion = $.extend((new TargetWinDefinition()), jsonObj);
    newTargetWinDefintion.updateUrlPatternRegExp();
    return newTargetWinDefintion;
 }

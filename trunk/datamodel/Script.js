@@ -7,7 +7,7 @@ function Script(){
 
 Script.createFromJson = function(jsonObj){
    var newScript = $.extend((new Script()), jsonObj);
-   newScript.targetWinDefinition = TargetWinDefinition.createFromJson(json.targetWinDefinition)
+   newScript.targetWinDefinition = TargetWinDefinition.createFromJson(jsonObj.targetWinDefinition)
    return newScript;
 };
 
@@ -21,7 +21,7 @@ Script.prototype = {
    },
    
    getOnloadJavaScript: function(){
-      this.onloadJavaScript;
+      return this.onloadJavaScript;
    },
    
    setOnloadJavaScript: function(scriptCode){
@@ -46,7 +46,10 @@ Script.prototype = {
 
    setUuid: function(uuid){
       this.uuid = uuid; 
-   }
+   },
    
+   matchUrl: function(url){
+      return this.targetWinDefinition.matchUrl(url)
+   }
    
 }

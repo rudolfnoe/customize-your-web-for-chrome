@@ -5,6 +5,7 @@
   "permissions": [
     "storage",
     "tabs",
+    "webNavigation",
     "<all_urls>"
   ],
 
@@ -16,6 +17,9 @@
   		"lib/custom/lang/Assert.js",
   		"lib/custom/lang/ArrayUtils.js",
       "lib/custom/lang/Array.js",
+  		"lib/custom/lang/ObjectUtils.js",
+  		"lib/custom/lang/collections/ArrayList.js",
+  		"lib/custom/lang/collections/Map.js",
   		"lib/custom/lang/ObjectUtils.js",
       "common/utils/UrlUtils.js",
   		"background/UUIDGenerator.js",

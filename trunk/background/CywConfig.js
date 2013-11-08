@@ -1,4 +1,5 @@
 CywConfig = {
+   
    //Flag indicating wether performance log is activated
    perfLogActive: false,
    scripts: [],
@@ -26,15 +27,14 @@ CywConfig = {
    	}
    },
    /* 
-    * Return arraylist of scripts matching the provied url
+    * Return Array of scripts matching the provied url
     */
    getActiveScriptsForUrl: function(url){
-      var scripts = this.getScripts()
       var result = new Array()
-      for (var i = 0; i < scripts.length; i++) {
-         var script = scripts[i]
-         if(script.matchUrl(url) && !script.isDisabled()){
-            result.push(this.cloneScript(script))
+      for (var i = 0; i < this.scripts.length; i++) {
+         var script = this.scripts[i]
+         if(script.matchUrl(url)){
+            result.push(script);
          }
       }
       return result
@@ -85,8 +85,11 @@ CywConfig = {
    init: function(){
    	var self = this;
    	console.log('CywConfig.init');
-   	chrome.storage.local.get('scripts', function(storageObj){
-   		self.scripts = new ArrayList(storageObj.scripts);
+      chrome.storage.local.get('scripts', function(storageObj){
+         self.scripts = []
+         for(var i=0; i<storageObj.scripts.length; i++){
+            self.scripts.push(Script.createFromJson(storageObj.scripts[i]));
+         }
    		console.log('Scripts count: '+ self.scripts.length);
    	});
    },
@@ -110,6 +113,7 @@ CywConfig = {
    saveScripts: function(){
    	chrome.storage.local.set({'scripts': this.scripts}, function() {
   	    // Notify that we saved.
+       alert('successfully saved');
   	    console.log('Scripts successfully saved');
   	});   
 
