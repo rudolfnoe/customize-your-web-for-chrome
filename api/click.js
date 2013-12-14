@@ -1,16 +1,20 @@
 (function(){
    var defaultOptions = {
       "button": 0,
-      "modifierMask": 0
+      "modifierMask": 0,
+      "fistOrLast": "first"
    }
    click = function(jQuerySelector, opts){
       var settings = $.extend(defaultOptions, opts); 
-      $(jQuerySelector).each(function(){
-         performEvent(this, "mouseover", settings.modifierMask, settings.button);
-         performEvent(this, "mousedown", settings.modifierMask, settings.button);
-         performEvent(this, "click", settings.modifierMask, settings.button);
-         performEvent(this, "mouseupd", settings.modifierMask, settings.button);
-      });
+      if (settings.firstOrLast == "first"){
+         var elem = $(jQuerySelector).first().get(0);
+      }else{
+         var elem = $(jQuerySelector).last().get(0);
+      }
+      performEvent(elem, "mouseover", settings.modifierMask, settings.button);
+      performEvent(elem, "mousedown", settings.modifierMask, settings.button);
+      performEvent(elem, "click", settings.modifierMask, settings.button);
+      performEvent(elem, "mouseupd", settings.modifierMask, settings.button);
    };
 
    function performEvent(target, type, modifierMask, button){

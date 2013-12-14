@@ -15,18 +15,16 @@
    }
 
    
-   shortcut = function(keyCombinationOrOptionObj, jQuerySelectorForTarget){
+   shortcut = function(keyCombination, selectorOrOptions){
          var options, callbackFct;
-         if (typeof keyCombinationOrOptionObj == "string" ){
-            var settings = $.extend(defaultOptions, {});
-            settings.keyCombination = keyCombinationOrOptionObj;
-            settings.jQuerySelectorForTarget = jQuerySelectorForTarget;
+         if (typeof selectorOrOptions == "string" ){
+            var settings = $.extend(defaultOptions, {keyCombination:keyCombination, jQuerySelectorForTarget:selectorOrOptions});
          }else{
-            //keyCombinationOrOptionObj is options object
-            var settings = $.extend(defaultOptions, keyCombinationOrOptionObj);
+            //keyCombination is options object
+            var settings = $.extend(defaultOptions, {keyCombination:keyCombination}, selectorOrOptions);
          }
          if (settings.jQuerySelectorForTarget){
-            var clickOptions = {};
+            var clickOptions = {fistOrLast:settings.firstOrLast};
             if (settings.linkTarget == "tab"){
                clickOptions.modifierMask = ShortcutManager.CTRL
             }

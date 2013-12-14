@@ -26,6 +26,18 @@
 	"content_scripts" : [{
 				"matches":["*://*/*"],
 				"js" : ["lib/jquery/jquery-1.9.1.js",
+                  "lib/custom/lang/Assert.js",
+                  "lib/custom/lang/ObjectUtils.js",
+                  "lib/custom/lang/StringUtils.js",
+                  "lib/custom/dom/DomUtils.js",
+                  "lib/custom/util/Utils.js",
+                  "lib/custom/ui/shortcuts/KeyCodeMapper.js",
+                  "lib/custom/ui/shortcuts/ShortcutCommands.js",
+                  "lib/custom/ui/shortcuts/AbstractShortcutManager.js",
+                  "lib/custom/ui/shortcuts/Shortcutmanager2.js",
+                  "lib/custom/ui/shortcuts/ShortStringManager.js",
+                  "api/shortcut.js",
+                  "api/click.js",
 						"contentscript/ContentScriptController.js"],
 				"run_at": "document_end"
 			}],
