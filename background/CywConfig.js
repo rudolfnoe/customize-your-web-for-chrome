@@ -90,7 +90,7 @@ CywConfig = {
          for(var i=0; i<storageObj.scripts.length; i++){
             self.scripts.push(Script.createFromJson(storageObj.scripts[i]));
          }
-   		console.log('Scripts count: '+ self.scripts.length);
+   		console.log('CYW Scripts count: '+ self.scripts.length);
    	});
    },
    
@@ -113,8 +113,7 @@ CywConfig = {
    saveScripts: function(){
    	chrome.storage.local.set({'scripts': this.scripts}, function() {
   	    // Notify that we saved.
-       alert('successfully saved');
-  	    console.log('Scripts successfully saved');
+  	    console.log('CYW: Scripts successfully saved');
   	});   
 
    }
