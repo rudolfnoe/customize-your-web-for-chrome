@@ -1,5 +1,7 @@
 $(function(){
-Shortcut.add("asdf", '#searchsubmit');
-Shortcut.add("ctrl+shift+z", '#searchsubmit');
-//Click('#menu-item-32 a');
+shortcut("asdf", '#searchsubmit');
+shortcut("ctrl+shift+z", 
+         {"jQuerySelectorForTarget":'#menu-item-32 a:eq(0)',
+          "linkTarget":"tab"});
+//click('#menu-item-32 a:eq(0)', {"modifierMask":ShortcutManager.SHIFT});
 })

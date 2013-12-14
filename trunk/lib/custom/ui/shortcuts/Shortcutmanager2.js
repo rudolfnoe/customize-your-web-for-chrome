@@ -155,10 +155,9 @@ ShortcutManager.encodeEvent =  function(event){
 }
 
 ShortcutManager.encodeEventModifier =  function(event){
-    return event.altKey * Event.ALT_MASK |
-        event.ctrlKey * Event.CONTROL_MASK |
-        event.shiftKey * Event.SHIFT_MASK |
-        event.metaKey * Event.META_MASK;
+    return event.altKey * ShortcutManager.ALT |
+        event.ctrlKey * ShortcutManager.CTRL |
+        event.shiftKey * ShortcutManager.SHIFT
 }
 
 ShortcutManager.getShortcutKey = function(keyCombination, elementId){
@@ -191,13 +190,13 @@ ShortcutManager.parseKeyCombination = function(keyCombination){
       var modifier = StringUtils.trim(parts[i]).toUpperCase()
       switch(modifier){
          case "CTRL":
-            modifierMask = modifierMask | ShortcutManager.CTRL
+            modifierMask += ShortcutManager.CTRL
             break;
          case "SHIFT": 
-            modifierMask = modifierMask | ShortcutManager.SHIFT
+            modifierMask += ShortcutManager.SHIFT
             break;
          case "ALT": 
-            modifierMask = modifierMask | ShortcutManager.ALT
+            modifierMask += ShortcutManager.ALT
             break;
       }
    }
@@ -205,12 +204,12 @@ ShortcutManager.parseKeyCombination = function(keyCombination){
 }
 
 //Constants
-ShortcutManager.ALT = Event.ALT_MASK;
-ShortcutManager.CTRL = Event.CONTROL_MASK;
-ShortcutManager.SHIFT = Event.SHIFT_MASK;
-ShortcutManager.CTRL_SHIFT = Event.CONTROL_MASK | Event.SHIFT_MASK;
-ShortcutManager.ALT_SHIFT = Event.ALT_MASK | Event.SHIFT_MASK;
-ShortcutManager.CTRL_ALT = Event.ALT_MASK | Event.CONTROL_MASK;
+ShortcutManager.ALT = 1;
+ShortcutManager.CTRL = 2;
+ShortcutManager.SHIFT = 4;
+ShortcutManager.CTRL_SHIFT = ShortcutManager.CTRL + ShortcutManager.SHIFT;
+ShortcutManager.ALT_SHIFT = ShortcutManager.ALT + ShortcutManager.SHIFT;
+ShortcutManager.CTRL_ALT = ShortcutManager.CTRL + ShortcutManager.ALT;
 ShortcutManager.SUPPRESS_KEY = 1;
 ShortcutManager.PREVENT_FURTHER_EVENTS = 2;
 ShortcutManager.DO_NOT_SUPPRESS_KEY = 4;
