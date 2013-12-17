@@ -7,33 +7,37 @@
    //Default options
    var defaultOptions = {
       "keyCombination": null,
-      "jQuerySelectorForTarget": null,
-      "callbackFct" : null,
-      "firstOrLast": "first",
+      "selector": null,
+      "callback" : null,
+      "pos": "first",
       //one of current, tab, window
       "linkTarget": "current"
    }
 
    
-   shortcut = function(keyCombination, selectorOrOptions){
-         var options, callbackFct;
-         if (typeof selectorOrOptions == "string" ){
-            var settings = $.extend(defaultOptions, {keyCombination:keyCombination, jQuerySelectorForTarget:selectorOrOptions});
+   shortcut = function(keyCombination, selectorOrFunctionOrOptions){
+         var options, callback;
+         if (typeof selectorOrFunctionOrOptions == "string" ){
+            var settings = $.extend(defaultOptions, {keyCombination:keyCombination, selector:selectorOrFunctionOrOptions});
+         }else if (typeof selectorOrFunctionOrOptions == "function" ){
+            var settings = $.extend(defaultOptions, {keyCombination:keyCombination, callback:selectorOrFunctionOrOptions});
          }else{
             //keyCombination is options object
-            var settings = $.extend(defaultOptions, {keyCombination:keyCombination}, selectorOrOptions);
+            var settings = $.extend(defaultOptions, {keyCombination:keyCombination}, selectorOrFunctionOrOptions);
          }
-         if (settings.jQuerySelectorForTarget){
-            var clickOptions = {fistOrLast:settings.firstOrLast};
+         if (settings.selector){
+            var clickOptions = {pos:settings.pos};
             if (settings.linkTarget == "tab"){
                clickOptions.modifierMask = ShortcutManager.CTRL
             }
+            var focusOptions = {pos:settings.pos}
             //JQuery Identifier --> Click it
-            var callbackFct = function(){
-               click(settings.jQuerySelectorForTarget, clickOptions);
+            var callback = function(){
+               click(settings.selector, clickOptions);
+               focus(settings.selector, focusOptions);
             }
-         }else if(settingscallbackFct){
-            var callbackFct = settings.callbackFct;
+         }else if(settings.callbackFct){
+            var callback = settings.callback;
          }else{
             throw new Error('Shortcut.add: Unknown Command');
          }
@@ -42,12 +46,16 @@
             if (smm == null){
                ssm = new ShortStringManager(window, 500, "ESCAPE");
             }
-            ssm.addShortcut(settings.keyCombination, callbackFct);
+            ssm.addShortcut(settings.keyCombination, function(){
+               callback();
+               //Prevent default 
+               return ShortcutManager.SUPPRESS_KEY;
+            });
          }else{
             if (sm == null){
                sm = new ShortcutManager(window, "keydown", false);
             }
-            sm.addShortcut(settings.keyCombination, callbackFct);
+            sm.addShortcut(settings.keyCombination, callback);
          }
       }
 })()
