@@ -27,6 +27,7 @@ OptionPageController = {
 	
 	init: function(){
 		$('#saveBtn').on('click', OptionPageController.saveScript.bind(this));
+		$('#applyBtn').on('click', OptionPageController.applyAndTestScript.bind(this));
 		this.initScriptsTable();
 	},
 	
@@ -48,7 +49,15 @@ OptionPageController = {
 		this.cywConfig.saveScript(this.createScriptFromForm());
 		this.initScriptsTable();
 		$('#scriptForm input,#scriptForm textarea').val('');
-	}
+	},
+   
+   applyAndTestScript: function(){
+      this.cywConfig.saveScript(this.createScriptFromForm());
+      this.initScriptsTable();
+      var lastTabId = chrome.extension.getBackgroundPage().MainController.getLastFocusedTabId();
+      chrome.tabs.reload(lastTabId);
+      chrome.tabs.update(lastTabId, {active: true});
+   }
 	
 }
 

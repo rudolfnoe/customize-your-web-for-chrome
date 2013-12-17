@@ -43,8 +43,8 @@ with(this){
          this.abstractDestroy()
       },
 
-      execute: function(){
-         this.executeCommands(this.keybuffer)
+      execute: function(event){
+         this.executeCommands(this.keybuffer, event)
          this.resetVariables()
       },
       
@@ -62,7 +62,7 @@ with(this){
          }
          this.keybuffer += this.assureSameCase(String.fromCharCode(event.charCode))
          if(this.isKeybufferUnique(this.keybuffer)){
-            this.execute()
+            this.execute(event)
          }else{
             Utils.executeDelayed(this.mainTimerId, this.executionDelay, this.execute, this)
          }
@@ -88,6 +88,10 @@ with(this){
          return true
       },
       
+      isStopEvent: function(commandResult){
+         return true;
+      },
+
       releaseInputBlocking: function(){
          this.isInputBlockingActive = false
       },

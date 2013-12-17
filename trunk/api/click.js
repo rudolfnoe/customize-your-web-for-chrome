@@ -2,15 +2,11 @@
    var defaultOptions = {
       "button": 0,
       "modifierMask": 0,
-      "fistOrLast": "first"
+      "pos": "first"
    }
-   click = function(jQuerySelector, opts){
+   click = function(selector, opts){
       var settings = $.extend(defaultOptions, opts); 
-      if (settings.firstOrLast == "first"){
-         var elem = $(jQuerySelector).first().get(0);
-      }else{
-         var elem = $(jQuerySelector).last().get(0);
-      }
+      var elem = APIHelper.getSingleElement(selector, settings.pos);
       performEvent(elem, "mouseover", settings.modifierMask, settings.button);
       performEvent(elem, "mousedown", settings.modifierMask, settings.button);
       performEvent(elem, "click", settings.modifierMask, settings.button);

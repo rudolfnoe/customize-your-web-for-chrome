@@ -9,8 +9,7 @@
    "commands": {
        "open-configuration": {
          "suggested_key": {
-           "default": "Ctrl+Q",
-           "windows": "Ctrl+Q"
+           "default": "Ctrl+Shift+C"
          },
          "description": "Open configuration"
        }
@@ -46,7 +45,9 @@
                   "lib/custom/ui/shortcuts/AbstractShortcutManager.js",
                   "lib/custom/ui/shortcuts/Shortcutmanager2.js",
                   "lib/custom/ui/shortcuts/ShortStringManager.js",
+                  "api/api_helper.js",
                   "api/shortcut.js",
+                  "api/focus.js",
                   "api/click.js",
 						"contentscript/ContentScriptController.js"],
 				"run_at": "document_end"
