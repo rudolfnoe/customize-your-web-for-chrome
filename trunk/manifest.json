@@ -6,6 +6,16 @@
 
 	"options_page" : "optionpage/options.html",
 
+   "commands": {
+       "open-configuration": {
+         "suggested_key": {
+           "default": "Ctrl+Q",
+           "windows": "Ctrl+Q"
+         },
+         "description": "Open configuration"
+       }
+   },
+    
 	"background" : {
 		"scripts" : ["lib/jquery/jquery-1.9.1.js", "lib/custom/lang/Assert.js",
 				"lib/custom/lang/ArrayUtils.js", 
