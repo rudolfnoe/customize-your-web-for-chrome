@@ -7,10 +7,11 @@ ContentScriptController = {
    		console.log(response.jsCode);
  	   	$('body').append('<script>' + response.jsCode + '</script>');
    	});
-   },
-   
-
-	
-   
+      shortcut("ESCAPE", function(){
+         if (document.activeElement.blur){
+            document.activeElement.blur();
+         }
+      });
+   }
 } 
 ContentScriptController.injectScript();
