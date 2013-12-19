@@ -107,7 +107,9 @@ CywConfig = {
    			}
    		}
    	}
-   	this.saveScripts();   
+   	this.saveScripts();
+      //Return updated Script
+      return aScript;
    },
    
    saveScripts: function(){

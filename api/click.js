@@ -1,11 +1,11 @@
 (function(){
-   var defaultOptions = {
+   var defaultSettings = {
       "button": 0,
       "modifierMask": 0,
       "pos": "first"
    }
    click = function(selector, opts){
-      var settings = $.extend(defaultOptions, opts); 
+      var settings = $.extend({}, defaultSettings, opts); 
       var elem = APIHelper.getSingleElement(selector, settings.pos);
       performEvent(elem, "mouseover", settings.modifierMask, settings.button);
       performEvent(elem, "mousedown", settings.modifierMask, settings.button);

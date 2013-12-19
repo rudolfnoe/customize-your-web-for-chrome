@@ -52,7 +52,8 @@ OptionPageController = {
 	},
    
    applyAndTestScript: function(){
-      this.cywConfig.saveScript(this.createScriptFromForm());
+      var updatedScript = this.cywConfig.saveScript(this.createScriptFromForm());
+      $('#uuid').val(updatedScript.uuid);
       this.initScriptsTable();
       var lastTabId = chrome.extension.getBackgroundPage().MainController.getLastFocusedTabId();
       chrome.tabs.reload(lastTabId);

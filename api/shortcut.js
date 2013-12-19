@@ -2,28 +2,28 @@
    //Single Instance of ShortcutManager
    var sm = null;
    //Single Instance of ShortStringManager
-   var smm = null;
+   var ssm = null;
    
    //Default options
-   var defaultOptions = {
+   var defaultSettings = {
       "keyCombination": null,
       "selector": null,
       "callback" : null,
       "pos": "first",
       //one of current, tab, window
-      "linkTarget": "current"
+      "linkTarget": LinkTarget.CURRENT
    }
 
    
    shortcut = function(keyCombination, selectorOrFunctionOrOptions){
          var options, callback;
          if (typeof selectorOrFunctionOrOptions == "string" ){
-            var settings = $.extend(defaultOptions, {keyCombination:keyCombination, selector:selectorOrFunctionOrOptions});
+            var settings = $.extend({}, defaultSettings, {keyCombination:keyCombination, selector:selectorOrFunctionOrOptions});
          }else if (typeof selectorOrFunctionOrOptions == "function" ){
-            var settings = $.extend(defaultOptions, {keyCombination:keyCombination, callback:selectorOrFunctionOrOptions});
+            var settings = $.extend({}, defaultSettings, {keyCombination:keyCombination, callback:selectorOrFunctionOrOptions});
          }else{
             //keyCombination is options object
-            var settings = $.extend(defaultOptions, {keyCombination:keyCombination}, selectorOrFunctionOrOptions);
+            var settings = $.extend({}, defaultSettings, $.extend({keyCombination:keyCombination}, selectorOrFunctionOrOptions));
          }
          if (settings.selector){
             var clickOptions = {pos:settings.pos};
@@ -36,15 +36,15 @@
                click(settings.selector, clickOptions);
                focus(settings.selector, focusOptions);
             }
-         }else if(settings.callbackFct){
+         }else if(settings.callback){
             var callback = settings.callback;
          }else{
             throw new Error('Shortcut.add: Unknown Command');
          }
-         if(settings.keyCombination.indexOf("+")==-1){
+         if(settings.keyCombination.indexOf("+")==-1 && !KeyCodeMapper[settings.keyCombination]){
             //Shortstring
-            if (smm == null){
-               ssm = new ShortStringManager(window, 500, "ESCAPE");
+            if (ssm == null){
+               ssm = new ShortStringManager(window, 500, "Ctrl+SPACE");
             }
             ssm.addShortcut(settings.keyCombination, function(){
                callback();
