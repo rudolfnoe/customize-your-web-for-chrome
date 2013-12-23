@@ -158,7 +158,7 @@ ShortcutManager.encodeEventModifier =  function(event){
     return event.altKey * ShortcutManager.ALT |
         event.ctrlKey * ShortcutManager.CTRL |
         event.shiftKey * ShortcutManager.SHIFT
-}
+};
 
 ShortcutManager.getShortcutKey = function(keyCombination, elementId){
    var shortcutKey = null
