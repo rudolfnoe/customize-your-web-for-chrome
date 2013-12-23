@@ -23,7 +23,7 @@
       this.registerMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_TRUE, true)
       this.registerMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_FALSE, false)
       this.initShortcuts()
-   }
+   };
    
    ListViewHandler.prototype = {
       checkBlur: function(){
@@ -253,8 +253,8 @@
          this.highlight(this.listItems[newIndex], focusItem);
          this.fireEvent();
       }
-   }
+   };
    
-   ObjectUtils.extend(ListViewHandler, AbstractGenericEventHandler)
+   ObjectUtils.extend(ListViewHandler, AbstractGenericEventHandler);
    
 })()
