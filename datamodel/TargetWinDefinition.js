@@ -1,11 +1,12 @@
 const URL_DOMAIN_PART_REG_EXP = /^\w{1,}:\/\/(\w|\.){1,}/;
 
-function TargetWinDefinition(includeUrlPatternString, excludeUrlPatternString){
-   this.includeUrlPatternString = includeUrlPatternString;
+function TargetWinDefinition(urlPatternString){
+   this.urlPatternString = urlPatternString;
    this.includeUrlPatternsRegExp = [];
-   this.excludeUrlPatternString = excludeUrlPatternString;
    this.excludeUrlPatternsRegExp = [];
-   this.updateUrlPatternRegExp();
+   if (urlPatternString){
+   	this.updateUrlPatternRegExp();	
+   }
 }
 
 TargetWinDefinition.createFromJson = function(jsonObj){
@@ -27,10 +28,8 @@ TargetWinDefinition.prototype = {
       return matchingWins
    },
    
-   getUrlPatternDescription: function(){
-      if(this.includeUrlPatterns.size()==0)
-         return ""
-      return this.includeUrlPatterns.get(0).getString()
+   getUrlPatternString: function(){
+      return this.urlPatternString;
    },
    
    hasIncludePattern: function(){
@@ -92,19 +91,15 @@ TargetWinDefinition.prototype = {
    updateUrlPatternRegExp: function(){
       var self = this;
       this.excludeUrlPatternsRegExp = []
-      if (this.excludeUrlPatternString){
-         var excludeUrlPatternArry = this.excludeUrlPatternString.split('\n');
-         excludeUrlPatternArry.forEach(function(item){
-            self.excludeUrlPatternsRegExp.push(UrlUtils.convertUrlPatternToRegExp(item));
-         });
-      }
       this.includeUrlPatternsRegExp = []
-      if (this.includeUrlPatternString){
-         var includeUrlPatternArry = this.includeUrlPatternString.split('\n');
-         includeUrlPatternArry.forEach(function(item){
-            self.includeUrlPatternsRegExp.push(UrlUtils.convertUrlPatternToRegExp(item));
-         });
-      }
+      var urlPatternArray = this.urlPatternString.split('\n');
+      urlPatternArray.forEach(function(item){
+      	if(item && item.substring(0,1)!="-") {
+      		self.includeUrlPatternsRegExp.push(UrlUtils.convertUrlPatternToRegExp(item));
+      	}else if(item){
+            self.excludeUrlPatternsRegExp.push(UrlUtils.convertUrlPatternToRegExp(item.substring(1)));
+      	}
+      });
    }
       
 };

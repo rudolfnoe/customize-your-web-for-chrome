@@ -12,8 +12,13 @@ MainController = {
 				    var scripts = CywConfig.getActiveScriptsForUrl(request.url);
 				    var jsCode = "";
 				    scripts.forEach(function(script){
-				   	 jsCode += "\n" + script.onloadJavaScript;
+				   	 jsCode += "\n try{\n" 
+				   	 	+ script.onloadJavaScript
+				   	   + "} catch(e) {\n"
+				   	   + "\tconsole.log('Error in Script " + script.name + " (" + script.uuid + "): ' + e.message);\n" 
+				   	   + "}";
 				    });
+				    console.log(jsCode);
 				    sendResponse({jsCode: jsCode});
 				  });
 
