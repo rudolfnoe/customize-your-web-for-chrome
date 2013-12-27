@@ -32,8 +32,8 @@ Script.prototype = {
       return this.targetWinDefinition.excludeUrlPatternString;
    },
  
-   getIncludeUrlPatternString: function(){
-      return this.targetWinDefinition.includeUrlPatternString;
+   getUrlPatternString: function(){
+      return this.targetWinDefinition.getUrlPatternString();
    },
    
    setUrlPatterns: function(includeUrlPatternString, excludeUrlPatternString){
