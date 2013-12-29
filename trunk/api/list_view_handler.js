@@ -87,7 +87,8 @@
          Utils.executeDelayed((new Date()).getTime(), 100, this.checkBlur, this, [event])
       },
       handleFocus: function(event){
-         this.focusListView()
+         console.log('listview focused');
+         this.focusListView();
       },
       handleClick: function(event){
          var targetElement = event.target

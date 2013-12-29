@@ -34,7 +34,9 @@
 
 	"content_scripts" : [{
 				"matches":["*://*/*"],
-				"js" : ["lib/jquery/jquery-1.9.1.js",
+				"js" : ["temp/loadstart.js",
+				"lib/jquery/jquery-1.9.1.js",
+				      "lib/mutation-summary/mutation_summary.js",
                   "lib/custom/lang/Assert.js",
                   "lib/custom/lang/ObjectUtils.js",
                   "lib/custom/lang/StringUtils.js",
@@ -56,7 +58,8 @@
                   "api/click.js",
                   "api/list_view_handler.js",
                   "api/listview.js",
-						"contentscript/ContentScriptController.js"],
+						"contentscript/ContentScriptController.js",
+						"temp/loadend.js"],
 				"run_at": "document_end"
 			}],
 

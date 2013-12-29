@@ -5,20 +5,20 @@
     * @param: useCapture: Default = true 
     */
    function AbstractShortcutManager(targetObjects, eventType, useCapture){
-      this.destroyed = false
-      this.currentEvent = null
-      this.eventType  = eventType!=null?eventType:"keydown"
-      this.keyEventHandler = new KeyEventHandler(this, "handleEvent")
+      this.destroyed = false;
+      this.currentEvent = null;
+      this.eventType  = eventType!=null?eventType:"keydown";
+      this.keyEventHandler = new KeyEventHandler(this, "handleEvent");
       //shortcut to command map
       //key shortcutkey; value command 
-      this.shortcutToCommandMap = {}
-      this.suspended = false
+      this.shortcutToCommandMap = {};
+      this.suspended = false;
       if(targetObjects.constructor && targetObjects.constructor.toString().indexOf("function Array")!=-1){
-         this.targetObjects = targetObjects
+         this.targetObjects = targetObjects;
       }else{
-         this.targetObjects = new Array(targetObjects)
+         this.targetObjects = new Array(targetObjects);
       }
-      this.useCapture = arguments.length>=3?useCapture:true
+      this.useCapture = arguments.length>=3?useCapture:true;
       
       for (var i = 0; i < this.targetObjects.length; i++) {
          this.addEventListenerToTarget(this.targetObjects[i]);
@@ -30,23 +30,23 @@
       AbstractShortcutManager: AbstractShortcutManager,
 
       getShortcuts: function(){
-         return this.shortcutToCommandMap
+         return this.shortcutToCommandMap;
       },
       
       getCommandMap: function(){
-         return this.shortcutToCommandMap
+         return this.shortcutToCommandMap;
       },  
 
       getCurrentEvent: function(){
-         return this.currentEvent 
+         return this.currentEvent;
       },
       
       getEventType: function(){
-         return this.eventType
+         return this.eventType;
       },
 
       setEventType: function(eventType){
-         this.eventType = eventType
+         this.eventType = eventType;
       },
    
       /*
@@ -54,7 +54,7 @@
        */
       abstractAddShortcut: function(shortcutKey, cmdDefinition, cmdThisObj, clientId){
          if(this.destroyed)
-            throw new Error('Shortcutmananger already destroyed')
+            throw new Error('Shortcutmananger already destroyed');
          /*Bugfix 10.02.2013
           * Avoid registration of shortcuts with "0" 
           * as Umlaute will be mapped to "0" in some cases
@@ -68,11 +68,11 @@
             command = new JsShortcut(cmdDefinition, clientId)
          }else if(typeof cmdDefinition == "function" || 
               (cmdDefinition!=null && typeof cmdDefinition.handleEvent == "function")){
-           command = new FunctionShortcut(cmdDefinition, cmdThisObj, clientId)        
+           command = new FunctionShortcut(cmdDefinition, cmdThisObj, clientId);        
          }else if(cmdDefinition instanceof XULElement && cmdDefinition.tagName.toLowerCase()=="command"){
-            command = new CommandShortcut(cmdDefinition, clientId)   
+            command = new CommandShortcut(cmdDefinition, clientId);
          }else{
-           throw new Error('cmdDefinition is neither String nor Function or EventHandler')  
+           throw new Error('cmdDefinition is neither String nor Function or EventHandler');  
          }
          
          var commandArray = this.shortcutToCommandMap[shortcutKey];
@@ -83,11 +83,11 @@
       },
       
       abstractDestroy: function(){
-         this.shortcutToCommandMap = null
+         this.shortcutToCommandMap = null;
          for (var i = 0; i < this.targetObjects.length; i++) {
             this.targetObjects[i].removeEventListener(this.eventType, this.keyEventHandler, this.useCapture);
          }
-         this.destroyed = true
+         this.destroyed = true;
       },
       
       addEventListenerToTarget: function(targetObj){
@@ -95,8 +95,8 @@
       },
 
       addTargetObject: function(obj){
-         this.targetObjects.push(obj)
-         this.addEventListenerToTarget(obj)
+         this.targetObjects.push(obj);
+         this.addEventListenerToTarget(obj);
       },
       
       /*
@@ -105,8 +105,8 @@
        */
       clearAllShortcuts: function(clientId){
          if(clientId==null){
-            this.shortcutToCommandMap = new Object()
-            return
+            this.shortcutToCommandMap = new Object();
+            return;
          }
          try{
             for(i in this.shortcutToCommandMap){
@@ -119,20 +119,20 @@
                }
                this.shortcutToCommandMap[i] = newShortcutArray;
             }
-         }catch(e){alert(e)}
+         }catch(e){alert(e);}
       },
       
       destroy: function(){
-         this.abstractDestroy()
+         this.abstractDestroy();
       },
       
       executeCommands: function(shortcutKey, event){
-         var commandArray = this.getCommandArray(shortcutKey)
+         var commandArray = this.getCommandArray(shortcutKey);
          if(!commandArray){
-            this.currentEvent = null
-            return false
+            this.currentEvent = null;
+            return false;
          }
-         this.currentEvent = event
+         this.currentEvent = event;
          for (var i = 0; i < commandArray.length; i++) {
             //try{
                var result = commandArray[i].handleEvent(event);
@@ -150,49 +150,49 @@
       },
       
       getCommandArray: function(shortcutKey){
-         return this.shortcutToCommandMap[shortcutKey]
+         return this.shortcutToCommandMap[shortcutKey];
       },
       
       getShortcutKey: function(keyCombination, elementId){
-         throw new Error ('must be implemented')
+         throw new Error ('must be implemented');
       },
       
       getShortcutKeyFromEvent: function(event, addParam){
-         throw new Error ('must be implemented')
+         throw new Error ('must be implemented');
       },
 
       handleEvent: function(event){
          if(this.suspended)
-            return
-         this.handleEventInternal(event)
+            return;
+         this.handleEventInternal(event);
       },
       
       handleEventInternal: function(event, addParam){
-         throw new Error ('must be implemented')
+         throw new Error ('must be implemented');
       },
       
       hasModifier: function(event){
-         return event.altKey || event.ctrlKey || event.metaKey   
+         return event.altKey || event.ctrlKey || event.metaKey;   
       },
    
       isPreventFurtherCommands: function(commandResult){
-         return false
+         return false;
       },
       
       isStopEvent: function(commandResult){
-         return false
+         return false;
       },
       
       isSuspended: function(){
-         return this.suspended
+         return this.suspended;
       },
       
       resume: function(){
-         this.suspended = false
+         this.suspended = false;
       },
       
       suspend: function(){
-         this.suspended = true
+         this.suspended = true;
       }
    }
 
@@ -202,10 +202,10 @@
     * Constructor for KeyEventHandler
     */
    function KeyEventHandler(shortcutManager, scmHandleEventFunction){
-      this.shortcutManager = shortcutManager
-      this.scmHandleEventFunction = scmHandleEventFunction
+      this.shortcutManager = shortcutManager;
+      this.scmHandleEventFunction = scmHandleEventFunction;
       this.handleEvent = function(event){
-         this.shortcutManager[this.scmHandleEventFunction](event)
+         this.shortcutManager[this.scmHandleEventFunction](event);
       }
    }
    this.KeyEventHandler = KeyEventHandler;
