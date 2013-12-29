@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<script type="text/javascript" src="../../lib/mutation-summary/mutation_summary.js"></script>
+<script type="text/javascript" src="../../lib/jquery/jquery-1.9.1.js"></script>
+<script type="text/javascript">
+ function appendDiv(){
+ $(function(){
+    $('body').append('<div class="testclass">test</div>');
+ });
+ }
+</script>
+</head>
+<body>
+   <button type="button" onclick="appendDiv()">Append Div</button>
+
+</body>
+<script type="text/javascript"> 
+   var observer = new MutationSummary({
+     callback: function(summeries){
+        console.log('added:' + summeries[0].added.length)
+        console.log('removed: ' + summeries[0].removed.length)
+        //console.log('reparent: ' + summeries[0].reparented.length)
+     },
+     queries: [{ element: ".testclass"}]
+   });
+</script>
+
+</html>
