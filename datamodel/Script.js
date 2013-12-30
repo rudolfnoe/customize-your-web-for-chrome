@@ -3,6 +3,7 @@ function Script(){
 	this.name = null;
 	this.targetWinDefinition = new TargetWinDefinition();
 	this.onloadJavaScript = null;
+	this.disabled = false;
 }
 
 Script.createFromJson = function(jsonObj){
@@ -12,6 +13,14 @@ Script.createFromJson = function(jsonObj){
 };
 
 Script.prototype = {
+   isDisabled: function(){
+      return this.disabled;
+   },
+   
+   setDisabled: function(disabled){
+      this.disabled = disabled;
+   },
+
    getName: function(){
       return this.name;
    },

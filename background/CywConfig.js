@@ -114,12 +114,12 @@ CywConfig = {
    
    saveScripts: function(){
    	chrome.storage.local.set({'scripts': this.scripts}, function() {
-  	    // Notify that we saved.
-  	    console.log('CYW: Scripts successfully saved');
-  	});   
-
+     	    // Notify that we saved.
+     	    console.log('CYW: Scripts successfully saved');
+   	});   
    }
    
+  
 };
    
   
