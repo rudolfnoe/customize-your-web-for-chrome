@@ -17,6 +17,7 @@ OptionPageController = {
 		var script = new Script();
       script.setUuid($('#uuid').val());
       script.setName($('#scriptName').val());
+      script.setDisabled($('#disabled').prop('checked')?true:false);
       script.setUrlPatterns($('#urls').val());
 		script.setOnloadJavaScript($('#onloadJSCode').val());
 		return script;
@@ -27,6 +28,9 @@ OptionPageController = {
 		var script = this.cywConfig.getScriptByUUIId($target.attr('data-edit-uuid'));
 		$('#uuid').val(script.getUuid());
 		$('#scriptName').val(script.getName());
+		if (script.isDisabled()) {
+		   $('#disabled').attr('checked','checked');
+		}
 		$('#urls').val(script.getUrlPatternString());
 		$('#onloadJSCode').val(script.getOnloadJavaScript());
 	},
@@ -40,6 +44,7 @@ OptionPageController = {
 	
 	initForm: function(){
 		$('#scriptForm input,#scriptForm textarea').val('');
+		$('#disabled').removeAttr('checked');
 	},
 	
 	initScriptsTable: function(){
@@ -48,8 +53,8 @@ OptionPageController = {
 		scripts.forEach(function(script){
 			$('<tr>' +
 			  	'<td><a data-edit-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-edit"></span></a></td>' +
-				'<td>'+ script.name + '</td>' +
-				'<td><a data-delete-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-trash"></span></a></td></tr>')
+			  	'<td><a href="#" ' + (script.disabled?'style="color:#999"':'') + '>'+ script.name + '</a></td>' +
+				'<td align="center"><a data-delete-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-trash"></span></a></td></tr>')
 			.appendTo('#scripts');
 		});
 		$('a[data-edit-uuid]').on('click', OptionPageController.editScript.bind(this));
