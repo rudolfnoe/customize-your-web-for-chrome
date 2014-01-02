@@ -56,6 +56,10 @@
       }
       var rootElement = APIHelper.getSingleElement(this.rootElementSelector, this.settings.pos);
       var $listItems = typeof this.listItemSelectorOrJQueryObj == "string"?$(this.listItemSelectorOrJQueryObj, rootElement):this.listItemSelectorOrJQueryObj;
+      //filter header rows
+      if (this.settings.noOfHeaderRows > 0){
+      	$listItems = $listItems.filter(':gt(' + (this.settings.noOfHeaderRows-1) + ')');
+      }
       this.listviewHandler = new ListViewHandler(rootElement, $listItems.toArray(), this.settings.highlightCss, this.settings.linkTarget, this.settings.linkNoToOpen);
       if(this.settings.focusOnLoad){
          focus(this.rootElementSelector);
