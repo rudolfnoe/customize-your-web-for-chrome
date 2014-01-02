@@ -33,7 +33,7 @@ CywConfig = {
       var result = new Array()
       for (var i = 0; i < this.scripts.length; i++) {
          var script = this.scripts[i]
-         if(script.matchUrl(url)){
+         if(script.matchUrl(url) && !script.isDisabled()){
             result.push(script);
          }
       }
