@@ -2,15 +2,30 @@
    var defaultSettings = {
       "button": 0,
       "modifierMask": 0,
-      "pos": "first"
+      "pos": "first",
+      "linkTarget": LinkTarget.CURRENT 
    }
-   click = function(selector, opts){
+   click = function(selectorOrElem, opts){
+   	var elem;
       var settings = $.extend({}, defaultSettings, opts); 
-      var elem = APIHelper.getSingleElement(selector, settings.pos);
-      performEvent(elem, "mouseover", settings.modifierMask, settings.button);
-      performEvent(elem, "mousedown", settings.modifierMask, settings.button);
-      performEvent(elem, "click", settings.modifierMask, settings.button);
-      performEvent(elem, "mouseupd", settings.modifierMask, settings.button);
+      if (typeof selectorOrElem === "string"){
+      	elem = APIHelper.getSingleElement(selectorOrElem, settings.pos);
+      }else{
+      	elem = selectorOrElem;
+      }
+      if(!elem){
+      	console.warn('CYW click: Target not found for selector "' + selector + '"');
+      	return;
+      }
+      var link = $(elem).closest('a').get(0);
+      if (link && settings.linkTarget == LinkTarget.TAB){
+      	(new LinkWrapper(link)).open(LinkTarget.TAB);
+      } else {
+	      performEvent(elem, "mouseover", settings.modifierMask, settings.button);
+	      performEvent(elem, "mousedown", settings.modifierMask, settings.button);
+	      performEvent(elem, "click", settings.modifierMask, settings.button);
+	      performEvent(elem, "mouseupd", settings.modifierMask, settings.button);
+      }
    };
 
    function performEvent(target, type, modifierMask, button){

@@ -1,5 +1,5 @@
 (function(){
-   const EVENT_TYPES_FOR_ROOT_CAPTURE_TRUE = ["click", "blur"];
+   const EVENT_TYPES_FOR_ROOT_CAPTURE_TRUE = ["click", "focusout"];
    const EVENT_TYPES_FOR_ROOT_CAPTURE_FALSE = ["focus"];
    const CURRENT_INDEX_ATTR = 'cyw_currentIndex';
    
@@ -14,9 +14,11 @@
       this.listItems = listItems
       this.rootElement = rootElement
       if(this.rootElement.hasAttribute(CURRENT_INDEX_ATTR))
-         this.currentIndex = parseInt(this.rootElement.getAttribute(CURRENT_INDEX_ATTR), 10)
-//      if(StringUtils.isEmpty(rootElement.tabIndex))
-//         rootElement.tabIndex = 0
+      this.currentIndex = parseInt(this.rootElement.getAttribute(CURRENT_INDEX_ATTR), 10)
+      var tabIndex = $(rootElement).prop('tabIndex');
+      if (!tabIndex){
+      	$(rootElement).prop('tabIndex', '0');
+      }
       this.scm = new ShortcutManager(rootElement, "keydown", true)
       //ElementWrappers for td-tags with non-transparent background
       this.currentTdTagWrappers = []
@@ -27,7 +29,9 @@
    
    ListViewHandler.prototype = {
       checkBlur: function(){
-         var focusedElement = document.activeElement;
+         var focusedElement = $(document).prop('activeElement');
+         console.log('checkblur activeElement: ' + focusedElement.innerText.substring(1,30));
+         console.log('checkblur rootElement: ' + this.rootElement.innerText.substring(1,30));
          var isBlurred = true
          if(focusedElement){
             var compDocPosResult = this.rootElement.compareDocumentPosition( focusedElement )
@@ -83,11 +87,10 @@
             throw new Error("Link number to open exceeds number of available links within the item. Please correct ListView configuration.")
          }
       },
-      handleBlur: function(event){
-         Utils.executeDelayed((new Date()).getTime(), 100, this.checkBlur, this, [event])
+      handleFocusout: function(event){
+         Utils.executeDelayed((new Date()).getTime(), 400, this.checkBlur, this, [event])
       },
       handleFocus: function(event){
-         console.log('listview focused');
          this.focusListView();
       },
       handleClick: function(event){
@@ -211,12 +214,7 @@
          }
          var linkToOpen = this.getLinkToOpen()
          if(!linkToOpen){
-            var mouseEvent = new MouseEvent("mousedown")
-            mouseEvent.dispatch(ci)
-            mouseEvent.setType("click")
-            mouseEvent.dispatch(ci)
-            mouseEvent.setType("mouseup")
-            mouseEvent.dispatch(ci)
+         	click(ci);
             return
          }else {
             (new LinkWrapper(linkToOpen).open(linkTarget))

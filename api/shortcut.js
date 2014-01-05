@@ -16,35 +16,35 @@
 
    
    shortcut = function(keyCombination, selectorOrFunctionOrOptions){
-         var options, callback;
+         var settings = null, callback = null;
+         keyCombination = keyCombination.toUpperCase();
          if (typeof selectorOrFunctionOrOptions == "string" ){
-            var settings = $.extend({}, defaultSettings, {keyCombination:keyCombination, selector:selectorOrFunctionOrOptions});
+            settings = $.extend({}, defaultSettings, {keyCombination:keyCombination, selector:selectorOrFunctionOrOptions});
          }else if (typeof selectorOrFunctionOrOptions == "function" ){
-            var settings = $.extend({}, defaultSettings, {keyCombination:keyCombination, callback:selectorOrFunctionOrOptions});
+            settings = $.extend({}, defaultSettings, {keyCombination:keyCombination, callback:selectorOrFunctionOrOptions});
          }else{
             //keyCombination is options object
             var settings = $.extend({}, defaultSettings, $.extend({keyCombination:keyCombination}, selectorOrFunctionOrOptions));
          }
          if (settings.selector){
-            var clickOptions = {pos:settings.pos};
-            if (settings.linkTarget == "tab"){
-               clickOptions.modifierMask = ShortcutManager.CTRL
-            }
+            var clickOptions = {pos:settings.pos, linkTarget:settings.linkTarget};
             var focusOptions = {pos:settings.pos}
             //JQuery Identifier --> Click it
-            var callback = function(){
-               click(settings.selector, clickOptions);
-               focus(settings.selector, focusOptions);
+            callback = function(){
+	            click(settings.selector, clickOptions);
+	            focus(settings.selector, focusOptions);
             }
          }else if(settings.callback){
-            var callback = settings.callback;
+            callback = settings.callback;
          }else{
             throw new Error('Shortcut.add: Unknown Command');
          }
-         if(settings.keyCombination.indexOf("+")==-1 && !KeyCodeMapper[settings.keyCombination]){
+         if(settings.keyCombination.indexOf("+")==-1 && 
+         		(!KeyCodeMapper[settings.keyCombination] || 
+         				(KeyCodeMapper[settings.keyCombination] >= 48 && KeyCodeMapper[settings.keyCombination]<=111) )){
             //Shortstring
             if (ssm == null){
-               ssm = new ShortStringManager(window, 500, "Ctrl+SPACE");
+               ssm = new ShortStringManager(window, 300, "Ctrl+SHIFT+SPACE");
             }
             ssm.addShortcut(settings.keyCombination, function(){
                callback();

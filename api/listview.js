@@ -7,7 +7,7 @@
       "linkNoToOpen" : 1,
       "shortcut": null,
       "pos": "first",
-      "mutationSummarySelector": null
+      "mutationObserverSelector": null
    }
    
    var listviewActions = []
@@ -30,23 +30,26 @@
             focus(self.rootElementSelector, {"pos":self.settings.pos});
          });
       }
-      var rootNode = APIHelper.getSingleElement(this.rootElementSelector, this.settings.pos);
-      if (rootNode){
-         
-         this.mutationSummery = new MutationSummary({
-            callback: self.init.bind(self),
-            rootNode: rootNode,
-            queries: [{element: '*'}]
-         })
-      } else {
-         console.log('listview no rootnode found');
-         this.mutationSummeryRootNodeMissing = new MutationSummary({
-            callback: self.init.bind(self),
-            queries: [{element: '#ires'}]
-         }) 
-         return;
+
+      var rootNode = APIHelper.getSingleElement(rootElementSelector, this.settings.pos);
+      
+      //TODO make this more efficient
+      this.mutationObserver = new MutationObserver(self.init.bind(self));
+      
+      var mutationObeserRootNode = rootNode;
+      if (this.settings.mutationObserverSelector){
+      	mutationObeserRootNode = APIHelper.getSingleElement(this.settings.mutationObserverSelector, 'first');
+      	if (!mutationObeserRootNode){
+      		console.warn('CYW listview: mutationObserverRootNode could not be found with selector ' + this.settings.mutationObserverSelector);
+      	}
       }
-      this.init();
+      if (mutationObeserRootNode) {
+   		this.mutationObserver.observe(mutationObeserRootNode, {childList:true, subtree:true});
+   	}
+   	
+   	if (rootNode) {
+   		this.init();
+   	}
    };
    
    ListViewAction.prototype.init = function(){
@@ -55,6 +58,9 @@
          this.listviewHandler.destroy();
       }
       var rootElement = APIHelper.getSingleElement(this.rootElementSelector, this.settings.pos);
+      if (!rootElement){
+      	return;
+      }
       var $listItems = typeof this.listItemSelectorOrJQueryObj == "string"?$(this.listItemSelectorOrJQueryObj, rootElement):this.listItemSelectorOrJQueryObj;
       //filter header rows
       if (this.settings.noOfHeaderRows > 0){
