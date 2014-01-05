@@ -4,7 +4,18 @@ OptionPageController = {
 	validateIframeWin: null,
 	lastScriptError: null,
 	
-	deleteScript: function(evemt){
+	ajustLineNosJSCode: function(){
+		var noOfLines = $('#onloadJSCode').val().split('\n').length
+		noOfLines = Math.max(10, noOfLines);
+		noOfLines = Math.min(30, noOfLines);
+		$('#onloadJSCode').attr('rows', noOfLines);
+	},
+	
+	deleteScript: function(event){
+		var res = window.confirm('This script will be deleted.');
+		if (!res){
+			return;
+		}
 		$targetElement = $(event.currentTarget);
 		this.cywConfig.deleteScript($targetElement.attr('data-delete-uuid'));
 		this.initScriptsTable();
@@ -72,20 +83,22 @@ OptionPageController = {
 	init: function(){
 		this.validateIframeWin = $('#validate-iframe').get(0).contentWindow
 		
-		//Event-Hanlder
+		//Event-Handler
 		$('#saveBtn').on('click', OptionPageController.saveScript.bind(this));
 		$('#applyBtn').on('click', OptionPageController.applyAndTestScript.bind(this));
 		$('#deleteBtn').on('click', OptionPageController.deleteScriptBtn.bind(this));
 		$('#cancelBtn').on('click', OptionPageController.cancelBtn.bind(this));
 		$('#scriptFilter').on('keyup', OptionPageController.filterScriptTable.bind(this));
-		
-		//Render Scrips-Table#
-		this.initScriptsTable();
+		$('#onloadJSCode').on('keyup', OptionPageController.ajustLineNosJSCode.bind(this));
 		
 		//Shortcuts
+		shortcut('shift+alt+n', '#scriptName');
 		shortcut('shift+alt+f', '#scriptFilter');
 		shortcut('shift+alt+j', '#onloadJSCode');
-		listview('#scripts', 'tr',{shortcut:"shift+alt+p"});
+		listview('#scripts', 'tr',{shortcut:"shift+alt+p", highlightCss:'background-color:#f5f5f5', mutationObserverSelector:'#scripts'});
+
+		//Render Scrips-Table#
+		this.initScriptsTable();
 		
 		$(function(){
 			focus('#scriptFilter');
@@ -141,6 +154,9 @@ OptionPageController = {
       var lastTabId = chrome.extension.getBackgroundPage().MainController.getLastFocusedTabId();
       chrome.tabs.reload(lastTabId);
       chrome.tabs.update(lastTabId, {active: true});
+      setTimeout(function(){
+      	$('#onloadJSCode').focus();
+      }, 1000);
    },
    
 	validateAndSaveScript: function(){

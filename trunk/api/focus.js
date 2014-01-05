@@ -28,7 +28,7 @@
       } else if (target.select && settings.select){
          target.select();
       } else {
-			console.log('focus programming eror: unhandled condition');
+			console.error('focus programming eror: unhandled condition');
 			elemWrapper.restore()
 		}
 	};
