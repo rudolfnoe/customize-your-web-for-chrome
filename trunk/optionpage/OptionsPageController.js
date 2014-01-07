@@ -11,22 +11,6 @@ OptionPageController = {
 		$('#onloadJSCode').attr('rows', noOfLines);
 	},
 	
-	deleteScript: function(event){
-		var res = window.confirm('This script will be deleted.');
-		if (!res){
-			return;
-		}
-		$targetElement = $(event.currentTarget);
-		this.cywConfig.deleteScript($targetElement.attr('data-delete-uuid'));
-		this.initScriptsTable();
-	},
-	
-	deleteScriptBtn: function(){
-		this.cywConfig.deleteScript($('#uuid').val());
-		this.initScriptsTable();
-		this.initForm();
-	},
-	
 	cancelBtn: function(){
 		this.hideNotification();
 		this.initScriptsTable();
@@ -41,6 +25,22 @@ OptionPageController = {
       script.setUrlPatterns($('#urls').val());
 		script.setOnloadJavaScript($('#onloadJSCode').val());
 		return script;
+	},
+	
+	deleteScript: function(event){
+		var res = window.confirm('This script will be deleted.');
+		if (!res){
+			return;
+		}
+		$targetElement = $(event.currentTarget);
+		this.cywConfig.deleteScript($targetElement.attr('data-delete-uuid'));
+		this.initScriptsTable();
+	},
+	
+	deleteScriptBtn: function(){
+		this.cywConfig.deleteScript($('#uuid').val());
+		this.initScriptsTable();
+		this.initForm();
 	},
 	
 	editScript: function(event){
@@ -80,14 +80,37 @@ OptionPageController = {
 		$('#alert').addClass('hidden');
 	},
 	
+	importScripts: function(){
+		try{
+			var scripts = JSON.parse($('#impExpJSON').val());
+		}catch(e){
+			alert('Syntax error: ' + e.message);
+		}
+		if(!scripts){
+			return;
+		}
+		for (var i=0; i<scripts.length; i++){
+			var script = scripts[i];
+			this.cywConfig.saveScript(Script.createFromJson(script));
+		}
+		$('#exportDlg').modal('hide');
+		this.initScriptsTable();
+		this.showNotification('Scripts successfully imported', 'alert-success', true);
+		
+	},
+	
 	init: function(){
 		this.validateIframeWin = $('#validate-iframe').get(0).contentWindow
 		
 		//Event-Handler
+		$('#toggleAllChb').on('click', OptionPageController.toggleAllCheckboxes.bind(this));
+		$('#exportBtn').on('click', OptionPageController.showExportDialog.bind(this));
+		$('#importBtn').on('click', OptionPageController.showImportDialog.bind(this));
 		$('#saveBtn').on('click', OptionPageController.saveScript.bind(this));
 		$('#applyBtn').on('click', OptionPageController.applyAndTestScript.bind(this));
 		$('#deleteBtn').on('click', OptionPageController.deleteScriptBtn.bind(this));
 		$('#cancelBtn').on('click', OptionPageController.cancelBtn.bind(this));
+		$('#importBtnDlg').on('click', OptionPageController.importScripts.bind(this));
 		$('#scriptFilter').on('keyup', OptionPageController.filterScriptTable.bind(this));
 		$('#onloadJSCode').on('keyup', OptionPageController.ajustLineNosJSCode.bind(this));
 		
@@ -117,7 +140,8 @@ OptionPageController = {
 			$('<tr>' +
 			  	'<td><a data-edit-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-edit"></span></a></td>' +
 			  	'<td><span ' + (script.disabled?'style="color:#999"':'') + '>'+ script.name + '</span></td>' +
-				'<td align="center"><a data-delete-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-trash"></span></a></td></tr>')
+				'<td align="center"><input type="checkbox" name="exportFlag" value="' + script.uuid + '"/></td>' + 
+			'</tr>')
 			.appendTo('#scripts');
 		});
 		$('a[data-edit-uuid]').on('click', OptionPageController.editScript.bind(this));
@@ -159,7 +183,31 @@ OptionPageController = {
       }, 1000);
    },
    
-	validateAndSaveScript: function(){
+	showExportDialog: function(){
+		var self = this;
+		var scriptsToExport = [];
+		$('#scripts input[type=checkbox]:checked').each(function(){
+			scriptsToExport.push(self.cywConfig.getScriptByUUIId($(this).attr('value')));
+		});
+		$('#impExpJSON').val(JSON.stringify(scriptsToExport, null, 3));
+		$('#importBtnDlg').hide();
+		$('#exportDlg').modal({keyboard:true});
+		$('#impExpJSON').focus();
+	},
+	
+	showImportDialog: function(){
+		$('#impExpJSON').val('');
+		$('#importBtnDlg').show();
+		$('#exportDlg').modal({keyboard:true});
+		$('#impExpJSON').focus();
+	},
+
+	toggleAllCheckboxes: function(){
+		var checked = $('#toggleAllChb').prop('checked');
+		$('#scripts input[name=exportFlag]:visible').prop('checked', checked?true:false);
+	},
+	
+   validateAndSaveScript: function(){
 		var valid = this.validateJSCode();
 		if (!valid){
 			return false;

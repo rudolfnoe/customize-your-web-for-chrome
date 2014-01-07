@@ -52,12 +52,12 @@
 						<input id="scriptFilter" type="text" class="form-control">
 					</div>
 				</div>
-				<div>
+				<div class="row" style="max-height:650px; overflow-y:auto">
 					<table id="scripts" class="table table-striped table-bordered">
 						<tr>
 							<td></td>
 							<td><b>Script Name</b></td>
-							<td></td>
+							<td align="center"><b><input type="checkbox" id="toggleAllChb"/></b></td>
 						</tr>
 						<tr>
 							<td><span class="glyphicon glyphicon-edit"></span></td>
@@ -66,6 +66,11 @@
 						</tr>
 					</table>
 				</div>
+				<div class="row">
+					<div class="col-xs-12 form-group">
+						<button id="exportBtn" accesskey="e" class="btn btn-default">Export</button>
+						<button id="importBtn" accesskey="e" class="btn btn-default">Import</button>
+					</div>				</div>
 				<!-- /input-group -->
 			</div>
 			<div class="col-lg-9" id="scriptForm">
@@ -115,7 +120,7 @@
 						<div class="input-group col-xs-12">
 							<label for="onloadJSCode"><u>J</u>avaScript Code</label>
 							<textarea id="onloadJSCode" rows="10"
-								class="form-control col-xs-12"></textarea>
+								class="form-control col-xs-12" style="white-space: nowrap;font-family:monospace"></textarea>
 						</div>
 					</div>
 				</div>
@@ -130,6 +135,33 @@
 			</div>
 		</div>
 	</div>
+	<!-- Model Export Dialog -->
+	<div class="modal" id="exportDlg" >
+	  <div class="modal-dialog" style="width:70%">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">Import / Export Scripts</h4>
+	      </div>
+	      <div class="modal-body">
+	        <div class="container">
+	        	<div class="row">
+	        		<div class="col-xs-12 form-group">
+	        			<div class="input-group col-xs-12">
+	        				<label for="impExpJSON">Copy / Paste the code and save it with an external editor</label>
+				        	<textarea id="impExpJSON" class="col-xs-12" rows="20" cols="100"></textarea>
+				        </div>
+	        		</div>
+	        	</div>
+	        </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button id="importBtnDlg" type="button" class="btn btn-default">Import</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 	<iframe id="validate-iframe" style="display:none" src="validate_js_code.html"></iframe>
 </body>
 </html>

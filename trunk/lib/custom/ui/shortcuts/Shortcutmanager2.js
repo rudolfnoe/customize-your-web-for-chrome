@@ -36,7 +36,9 @@ ShortcutManager.prototype = {
    //main event handling method
    handleEventInternal: function(event, elementId){
 	  if(DomUtils.isEditableElement($(document).prop('activeElement')) && 
-          !this.hasModifier(event)){
+          !this.hasModifier(event) &&
+          [19, 27].indexOf(event.keyCode)==-1 &&
+          (event.keyCode < 112 || event.keyCode > 135)){
           return;
        }
       var shortcutKey = this.encodeEvent(event, elementId)
