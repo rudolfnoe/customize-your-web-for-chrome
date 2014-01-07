@@ -14,7 +14,7 @@
       	elem = selectorOrElem;
       }
       if(!elem){
-      	console.warn('CYW click: Target not found for selector "' + selector + '"');
+      	console.warn('CYW click: Target not found for selector "' + selectorOrElem + '"');
       	return;
       }
       var link = $(elem).closest('a').get(0);

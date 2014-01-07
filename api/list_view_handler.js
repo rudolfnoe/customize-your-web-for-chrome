@@ -30,8 +30,6 @@
    ListViewHandler.prototype = {
       checkBlur: function(){
          var focusedElement = $(document).prop('activeElement');
-         console.log('checkblur activeElement: ' + focusedElement.innerText.substring(1,30));
-         console.log('checkblur rootElement: ' + this.rootElement.innerText.substring(1,30));
          var isBlurred = true
          if(focusedElement){
             var compDocPosResult = this.rootElement.compareDocumentPosition( focusedElement )
@@ -88,7 +86,10 @@
          }
       },
       handleFocusout: function(event){
-         Utils.executeDelayed((new Date()).getTime(), 400, this.checkBlur, this, [event])
+      	var self = this;
+      	setTimeout(function(){
+      		self.checkBlur.apply(self);
+      	}, 10);
       },
       handleFocus: function(event){
          this.focusListView();

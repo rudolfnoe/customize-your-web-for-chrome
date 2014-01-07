@@ -33,11 +33,11 @@
 	},
 
 	"content_scripts" : [{
-				"matches":["*://*/*"],
+				"matches":["http://*/*", "https://*/*"],
 				"js" : ["temp/loadstart.js",
 				"lib/jquery/jquery-1.9.1.js",
 				"lib/jquery-plugins/filter-extensions/filter-extensions.js",
-				 "lib/mutation-summary/mutation_summary.js",
+				"lib/jquery-plugins/textcomplete/jquery.textcomplete.js",
 	              "lib/custom/lang/Assert.js",
 	              "lib/custom/lang/ObjectUtils.js",
 	              "lib/custom/lang/StringUtils.js",

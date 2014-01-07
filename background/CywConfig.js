@@ -99,12 +99,17 @@ CywConfig = {
    		aScript.uuid = UUIDGenerator.randomUUID();
    		this.scripts.push(aScript);
    	}else{
+   		var found = false;
    		for(var i=0; i<this.scripts.length;i++){
    			var oldScript = this.scripts[i];
    			if (oldScript.uuid == aScript.uuid){
    				this.scripts[i] = aScript;
+   				found = true;
                break;
    			}
+   		}
+   		if (!found){
+   			this.scripts.push(aScript);
    		}
    	}
    	this.saveScripts();
