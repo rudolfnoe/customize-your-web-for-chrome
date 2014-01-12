@@ -31,8 +31,13 @@
             var focusOptions = {pos:settings.pos}
             //JQuery Identifier --> Click it
             callback = function(){
-	            click(settings.selector, clickOptions);
-	            focus(settings.selector, focusOptions);
+            	//blur first for doing things on blur (bug with apex addon, textarea)
+            	var elem = APIHelper.getSingleElement(settings.selector, settings.pos);
+            	if (elem && elem.blur){
+            		elem.blur();
+            	}
+            	focus(settings.selector, focusOptions);
+           		click(settings.selector, clickOptions);
             }
          }else if(settings.callback){
             callback = settings.callback;
@@ -44,7 +49,7 @@
          				(KeyCodeMapper[settings.keyCombination] >= 48 && KeyCodeMapper[settings.keyCombination]<=111) )){
             //Shortstring
             if (ssm == null){
-               ssm = new ShortStringManager(window, 300, "Ctrl+SHIFT+SPACE");
+               ssm = new ShortStringManager(window, 400, "Ctrl+SHIFT+SPACE");
             }
             ssm.addShortcut(settings.keyCombination, function(){
                callback();

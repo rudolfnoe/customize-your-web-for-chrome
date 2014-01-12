@@ -5,7 +5,7 @@
 	                  'focus(selector, {pos:"frist", select:true});',
 	                  'listview();',
 	                  'listview(rootElementSelector, listItemSelectorOrJQueryObj);',
-	                  'listview(rootElementSelector, listItemSelectorOrJQueryObj,{"shortcut": null, "focusOnLoad": true, "linkTarget": LinkTarget.TAB, "noOfHeaderRows": 1, "linkNoToOpen" : 1, "pos": "first", "mutationSummarySelector": null});',
+	                  'listview(rootElementSelector, listItemSelectorOrJQueryObj,{"shortcut": null, "focusOnLoad": true, "linkTarget": LinkTarget.TAB, "noOfHeaderRows": 1, "linkNoToOpen" : 1, "pos": "first", "mutationObserverSelector": null});',
 	                  'shortcut();',
 	                  'shortcut(keyCombination, selector);',
 	                  'shortcut(keyCombination, function() { });',
