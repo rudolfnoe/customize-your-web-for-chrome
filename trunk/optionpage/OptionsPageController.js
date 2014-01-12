@@ -3,6 +3,7 @@ OptionPageController = {
 	timeId: 'FILTER_SCRIPT_TIMER',
 	validateIframeWin: null,
 	lastScriptError: null,
+	scriptChanged: false,
 	
 	ajustLineNosJSCode: function(){
 		var noOfLines = $('#onloadJSCode').val().split('\n').length
@@ -56,6 +57,8 @@ OptionPageController = {
 		$('#onloadJSCode').val(script.getOnloadJavaScript());
 		//focus first field
 		$('#scriptName').focus();
+		//reset changed flag
+		this.scriptChanged = false;
 	},
 	
 	filterScriptTable: function(){
@@ -114,10 +117,21 @@ OptionPageController = {
 			if (event.keyCode != 13){
 				return;
 			}
-			self.filterScriptTable();
+			self.initScriptsTable();
 		});
-		$('#filterBtn').on('click', OptionPageController.filterScriptTable.bind(this));
+		$('#filterBtn').on('click', OptionPageController.initScriptsTable.bind(this));
 		$('#onloadJSCode').on('keyup', OptionPageController.ajustLineNosJSCode.bind(this));
+
+		//Script changed handler
+		$('#scriptForm').find('input, textarea').on('change', function(){
+			self.scriptChanged = true;
+		});
+		
+		$(window).on('beforeunload', function(){
+		   if(self.scriptChanged){
+		   	   return 'Script has changed! Abord unloading for saving it.';
+		   }
+		});
 		
 		//Shortcuts
 		shortcut('shift+alt+n', '#scriptName');
@@ -125,6 +139,8 @@ OptionPageController = {
 		shortcut('shift+alt+j', '#onloadJSCode');
 		listview('#scripts', 'tr',{shortcut:"shift+alt+p", highlightCss:'background-color:#f5f5f5', mutationObserverSelector:'#scripts'});
 
+		//Set applied filter
+		$('#scriptFilter').val('applied:');
 		//Render Scrips-Table#
 		this.initScriptsTable();
 		
@@ -136,13 +152,22 @@ OptionPageController = {
 	initForm: function(){
 		$('#scriptForm input,#scriptForm textarea').val('');
 		$('#disabled').removeAttr('checked');
+		//Reset changed flag
+		this.scriptChanged = false;
 	},
 	
 	initScriptsTable: function(){
 		var self = this;
+		var scripts = null;
 		$('#scripts tr:gt(0)').remove();
-		var scripts = this.cywConfig.getScripts();
-		var filterVal = $('#scriptFilter').val();
+		var filterVal = $('#scriptFilter').val().toLowerCase();
+		if (filterVal.indexOf('applied:')==0){
+			var currentUrl = chrome.extension.getBackgroundPage().MainController.getLastFocusedTabUrl();
+			scripts = this.cywConfig.getActiveScriptsForUrl(currentUrl);
+			filterVal = filterVal.substring(8);
+		}else{
+			scripts = this.cywConfig.getScripts();
+		}
 		
 		scripts.forEach(function(script){
 			if (self.isShowScript(script, filterVal)){
@@ -159,12 +184,13 @@ OptionPageController = {
 	},
 	
 	isShowScript: function(script, filterVal){
+		filterVal = filterVal?filterVal.toLowerCase():"";
 		var fulltext = filterVal.indexOf('full:')==0;
 		if (fulltext){
 			filterVal = filterVal.substring(5);
 		}
-		if (script.name.indexOf(filterVal) != -1 ||
-		    (fulltext && script.getOnloadJavaScript().indexOf(filterVal) != -1)){
+		if (script.name.toLowerCase().indexOf(filterVal) != -1 ||
+		    (fulltext && script.getOnloadJavaScript().toLowerCase().indexOf(filterVal) != -1)){
 			return true;
 		} else {
 			return false;
