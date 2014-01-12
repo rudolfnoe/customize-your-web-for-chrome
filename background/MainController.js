@@ -1,6 +1,7 @@
 MainController = {
    lastFocusedTabId: null,
-	
+   lastFocusedTabUrl: null,
+   
 	init: function(){
 		//chrome.webNavigation.onDOMContentLoaded.addListener(MainController.onDomContentLoaded.bind(this));
       //Listener for messages from content script
@@ -32,14 +33,17 @@ MainController = {
         chrome.tabs.query({active: true}, function(tabs) {
             if (tabs.length) {
                MainController.lastFocusedTabId = tabs[0].id;
+               MainController.lastFocusedTabUrl = tabs[0].url;
                currentTabIndex = tabs[0].index;
             }
         });
         
         chrome.tabs.query({url: optionsUrl}, function(tabs) {
             if (tabs.length) {
-                 chrome.tabs.move(tabs[0].id, {index:currentTabIndex+1});
-                 chrome.tabs.update(tabs[0].id, {active: true});
+            	  var optionTabId = tabs[0].id
+                 chrome.tabs.move(optionTabId, {index:currentTabIndex+1});
+            	  chrome.tabs.reload(optionTabId);
+                 chrome.tabs.update(optionTabId, {active: true});
             } else {
                  chrome.tabs.create({url: optionsUrl, index:currentTabIndex+1});
             }
@@ -51,7 +55,14 @@ MainController = {
    
    getLastFocusedTabId: function(){
       return this.lastFocusedTabId;
-   }
+   },
+   
+	getLastFocusedTabUrl: function(){
+		return this.lastFocusedTabUrl;
+	}
+	
+	
+	
    
 
 } 
