@@ -59,20 +59,18 @@ OptionPageController = {
 	},
 	
 	filterScriptTable: function(){
-		Utils.executeDelayed(this.timeId, 300, function(){
-			var filterTerm = $('#scriptFilter').val();
-			if (!filterTerm){
-				$('#scripts tr').show();
-				return;
+		var filterTerm = $('#scriptFilter').val();
+		if (!filterTerm){
+			$('#scripts tr').show();
+			return;
+		}
+		$('#scripts tr:gt(0)').each(function(){
+			var scriptName = $(this).find('td:nth-child(2)').text();
+			if (scriptName.toLowerCase().indexOf(filterTerm.toLowerCase()) >= 0){
+				$(this).show();
+			}else{
+				$(this).hide();
 			}
-			$('#scripts tr:gt(0)').each(function(){
-				var scriptName = $(this).find('td:nth-child(2)').text();
-				if (scriptName.toLowerCase().indexOf(filterTerm.toLowerCase()) >= 0){
-					$(this).show();
-				}else{
-					$(this).hide();
-				}
-			});
 		});
 	},
 	
@@ -100,6 +98,7 @@ OptionPageController = {
 	},
 	
 	init: function(){
+		var self = this;
 		this.validateIframeWin = $('#validate-iframe').get(0).contentWindow
 		
 		//Event-Handler
@@ -111,7 +110,13 @@ OptionPageController = {
 		$('#deleteBtn').on('click', OptionPageController.deleteScriptBtn.bind(this));
 		$('#cancelBtn').on('click', OptionPageController.cancelBtn.bind(this));
 		$('#importBtnDlg').on('click', OptionPageController.importScripts.bind(this));
-		$('#scriptFilter').on('keyup', OptionPageController.filterScriptTable.bind(this));
+		$('#scriptFilter').on('keydown', function(event){
+			if (event.keyCode != 13){
+				return;
+			}
+			self.filterScriptTable();
+		});
+		$('#filterBtn').on('click', OptionPageController.filterScriptTable.bind(this));
 		$('#onloadJSCode').on('keyup', OptionPageController.ajustLineNosJSCode.bind(this));
 		
 		//Shortcuts
@@ -134,18 +139,37 @@ OptionPageController = {
 	},
 	
 	initScriptsTable: function(){
+		var self = this;
 		$('#scripts tr:gt(0)').remove();
 		var scripts = this.cywConfig.getScripts();
+		var filterVal = $('#scriptFilter').val();
+		
 		scripts.forEach(function(script){
-			$('<tr>' +
-			  	'<td><a data-edit-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-edit"></span></a></td>' +
-			  	'<td><span ' + (script.disabled?'style="color:#999"':'') + '>'+ script.name + '</span></td>' +
-				'<td align="center"><input type="checkbox" name="exportFlag" value="' + script.uuid + '"/></td>' + 
-			'</tr>')
-			.appendTo('#scripts');
+			if (self.isShowScript(script, filterVal)){
+				$('<tr>' +
+				  	'<td><a data-edit-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-edit"></span></a></td>' +
+				  	'<td><span ' + (script.disabled?'style="color:#999"':'') + '>'+ script.name + '</span></td>' +
+					'<td align="center"><input type="checkbox" name="exportFlag" value="' + script.uuid + '"/></td>' + 
+				'</tr>')
+				.appendTo('#scripts');
+			}
 		});
 		$('a[data-edit-uuid]').on('click', OptionPageController.editScript.bind(this));
 		$('a[data-delete-uuid]').on('click', OptionPageController.deleteScript.bind(this));
+	},
+	
+	isShowScript: function(script, filterVal){
+		var fulltext = filterVal.indexOf('full:')==0;
+		if (fulltext){
+			filterVal = filterVal.substring(5);
+		}
+		if (script.name.indexOf(filterVal) != -1 ||
+		    (fulltext && script.getOnloadJavaScript().indexOf(filterVal) != -1)){
+			return true;
+		} else {
+			return false;
+		}
+		
 	},
 	
 	
