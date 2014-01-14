@@ -5,7 +5,7 @@ OptionPageController = {
 	lastScriptError: null,
 	scriptChanged: false,
 	
-	ajustLineNosJSCode: function(){
+   ajustLineNosJSCode: function(){
 		var noOfLines = $('#onloadJSCode').val().split('\n').length
 		noOfLines = Math.max(10, noOfLines);
 		noOfLines = Math.min(30, noOfLines);
@@ -28,17 +28,11 @@ OptionPageController = {
 		return script;
 	},
 	
-	deleteScript: function(event){
-		var res = window.confirm('This script will be deleted.');
-		if (!res){
-			return;
-		}
-		$targetElement = $(event.currentTarget);
-		this.cywConfig.deleteScript($targetElement.attr('data-delete-uuid'));
-		this.initScriptsTable();
-	},
-	
 	deleteScriptBtn: function(){
+	   var res = window.confirm('This script will be deleted.');
+	   if (!res){
+	      return;
+	   }
 		this.cywConfig.deleteScript($('#uuid').val());
 		this.initScriptsTable();
 		this.initForm();
@@ -52,6 +46,9 @@ OptionPageController = {
 		$('#scriptName').val(script.getName());
 		if (script.isDisabled()) {
 		   $('#disabled').prop('checked','checked');
+		   $('label[for=disabled]').addClass('highlightRed');
+		} else {
+		   $('label[for=disabled]').removeClass('highlightRed');
 		}
 		$('#urls').val(script.getUrlPatternString());
 		$('#onloadJSCode').val(script.getOnloadJavaScript());
@@ -59,8 +56,10 @@ OptionPageController = {
 		$('#scriptName').focus();
 		//reset changed flag
 		this.scriptChanged = false;
+      
+      
 	},
-	
+   
 	filterScriptTable: function(){
 		var filterTerm = $('#scriptFilter').val();
 		if (!filterTerm){
@@ -76,6 +75,10 @@ OptionPageController = {
 			}
 		});
 	},
+   
+   handleError: function(e){
+     alert('Error occured: ' + e.toString()); 
+   },
 	
 	hideNotification: function(){
 		$('#alert').addClass('hidden');
@@ -106,7 +109,7 @@ OptionPageController = {
 		
 		//Event-Handler
 		$('#toggleAllChb').on('click', OptionPageController.toggleAllCheckboxes.bind(this));
-		$('#exportBtn').on('click', OptionPageController.showExportDialog.bind(this));
+	   $('#exportBtn').on('click', OptionPageController.showExportDialog.bind(this));
 		$('#importBtn').on('click', OptionPageController.showImportDialog.bind(this));
 		$('#saveBtn').on('click', OptionPageController.saveScript.bind(this));
 		$('#applyBtn').on('click', OptionPageController.applyAndTestScript.bind(this));
@@ -137,6 +140,12 @@ OptionPageController = {
 		shortcut('shift+alt+n', '#scriptName');
 		shortcut('shift+alt+f', '#scriptFilter');
 		shortcut('shift+alt+j', '#onloadJSCode');
+		shortcut('shift+alt+e', '#exportBtn');
+		shortcut('shift+alt+i', '#importBtn');
+		shortcut('shift+alt+a', '#applyBtn');
+		shortcut('shift+alt+s', '#saveBtn');
+		shortcut('shift+alt+l', '#deleteBtn');
+		shortcut('shift+alt+c', '#cancelBtn');
 		listview('#scripts', 'tr',{shortcut:"shift+alt+p", highlightCss:'background-color:#f5f5f5', mutationObserverSelector:'#scripts'});
 
 		//Set applied filter
@@ -152,6 +161,7 @@ OptionPageController = {
 	initForm: function(){
 		$('#scriptForm input,#scriptForm textarea').val('');
 		$('#disabled').removeAttr('checked');
+		$('label[for=disabled]').removeClass('highlightRed');
 		//Reset changed flag
 		this.scriptChanged = false;
 	},
@@ -180,7 +190,6 @@ OptionPageController = {
 			}
 		});
 		$('a[data-edit-uuid]').on('click', OptionPageController.editScript.bind(this));
-		$('a[data-delete-uuid]').on('click', OptionPageController.deleteScript.bind(this));
 	},
 	
 	isShowScript: function(script, filterVal){
@@ -258,17 +267,30 @@ OptionPageController = {
 	},
 	
    validateAndSaveScript: function(){
+      if (!$('#scriptName').val()){
+         alert('Please enter a script name');
+         return;
+      }
+      if ( !$('#urls').val()){
+         alert('Please enter a least on URL pattern');
+         return;
+      }  
+      if( !$('#onloadJSCode').val()){
+         alert('Please enter JavaScript Code');
+         return;
+      }
 		var valid = this.validateJSCode();
 		if (!valid){
 			return false;
 		}
 		var updatedScript = this.cywConfig.saveScript(this.createScriptFromForm());
+      this.scriptChanged = false;
 		this.showNotification('Script successfully saved.', 'alert-success', true);
 		return updatedScript;
 	},
 	
    validateJSCode: function(){
-   		this.lastScriptError = null;
+   	this.lastScriptError = null;
 		var jsCode = $('#onloadJSCode').val();
 		var jsCode = 'try{\n' + 
 					jsCode +
