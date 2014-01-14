@@ -37,6 +37,14 @@
 	<script type="text/javascript" src="../api/list_view_handler.js"></script>
 	<script type="text/javascript" src="../api/listview.js"></script>
 	<link type="text/css" rel="stylesheet" href='../../lib/jquery-plugins/textcomplete/jquery.textcomplete.css'/>
+	<style type="text/css">
+	  .highlightRed{
+	     color:red;
+	  }
+	  .redBorder{
+	     border: 1px solid red;
+	  }
+	</style>
 	
 </head>
 <body>
@@ -64,17 +72,12 @@
 							<td><b>Script Name</b></td>
 							<td align="center"><b><input type="checkbox" id="toggleAllChb"/></b></td>
 						</tr>
-						<tr>
-							<td><span class="glyphicon glyphicon-edit"></span></td>
-							<td>asdf</span></td>
-							<td><span class="glyphicon glyphicon-trash"></span></td>
-						</tr>
 					</table>
 				</div>
 				<div class="row">
 					<div class="col-xs-12 form-group">
-						<button id="exportBtn" accesskey="e" class="btn btn-default">Export</button>
-						<button id="importBtn" accesskey="e" class="btn btn-default">Import</button>
+						<button id="exportBtn" class="btn btn-default">Export</button>
+						<button id="importBtn" class="btn btn-default">Import</button>
 					</div>				</div>
 				<!-- /input-group -->
 			</div>
@@ -100,7 +103,7 @@
 						   <label for="disabled"></label>
 							<div class="checkbox">
 						    <label>
-						      <input type="checkbox" id="disabled"> Disabled
+						      <input type="checkbox" id="disabled"><label for="disabled">Disabled</label>
 						    </label>
 						  </div>
 						</div>
@@ -131,10 +134,10 @@
 				</div>
 				<div class="row">
 					<div class="col-xs-12">
-						<button id="applyBtn" accesskey="a" class="btn btn-default"><u>A</u>pply & Test</button>
-						<button id="saveBtn" accesskey="s" class="btn btn-default"><u>S</u>ave</button>
-						<button id="deleteBtn" accesskey="l" class="btn btn-default">De<u>l</u>ete</button>
-						<button id="cancelBtn" accesskey="c" class="btn btn-default"><u>C</u>ancel</button>
+						<button id="applyBtn" class="btn btn-default"><u>A</u>pply & Test</button>
+						<button id="saveBtn" class="btn btn-default"><u>S</u>ave</button>
+						<button id="deleteBtn" class="btn btn-default">De<u>l</u>ete</button>
+						<button id="cancelBtn" class="btn btn-default"><u>C</u>ancel</button>
 					</div>
 				</div>
 			</div>
