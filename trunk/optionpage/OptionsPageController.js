@@ -109,7 +109,7 @@ OptionPageController = {
 		
 		//Event-Handler
 		$('#toggleAllChb').on('click', OptionPageController.toggleAllCheckboxes.bind(this));
-	   $('#exportBtn').on('click', OptionPageController.showExportDialog.bind(this));
+	    $('#exportBtn').on('click', OptionPageController.showExportDialog.bind(this));
 		$('#importBtn').on('click', OptionPageController.showImportDialog.bind(this));
 		$('#saveBtn').on('click', OptionPageController.saveScript.bind(this));
 		$('#applyBtn').on('click', OptionPageController.applyAndTestScript.bind(this));
@@ -124,6 +124,12 @@ OptionPageController = {
 		});
 		$('#filterBtn').on('click', OptionPageController.initScriptsTable.bind(this));
 		$('#onloadJSCode').on('keyup', OptionPageController.ajustLineNosJSCode.bind(this));
+		$('#onloadJSCode').on('keydown', function(e){
+			if(e.keyCode == 9 && !e.ctrlKey && !e.shiftKey){
+				self.insertAtCaret('onloadJSCode', '   ');
+				e.preventDefault();
+			}
+		});
 
 		//Script changed handler
 		$('#scriptForm').find('input, textarea').on('change', function(){
@@ -190,6 +196,17 @@ OptionPageController = {
 			}
 		});
 		$('a[data-edit-uuid]').on('click', OptionPageController.editScript.bind(this));
+	},
+	
+	insertAtCaret: function(areaId,text) {
+	    var txtarea = document.getElementById(areaId);
+	    var strPos = txtarea.selectionStart;
+	    var front = (txtarea.value).substring(0,strPos);  
+	    var back = (txtarea.value).substring(strPos,txtarea.value.length); 
+	    $(txtarea).val(front+text+back);
+	    strPos = strPos + text.length;
+        txtarea.selectionStart = strPos;
+        txtarea.selectionEnd = strPos;
 	},
 	
 	isShowScript: function(script, filterVal){

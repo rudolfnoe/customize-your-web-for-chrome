@@ -108,6 +108,9 @@
          }
       },
       highlight: function(item, focusItem){
+      	if(!item){
+      		return;
+      	}
          this.currentItemWrapper = new ElementWrapper(item)
          this.currentItemWrapper.setCss(this.highlightCss)
          if(this.isTableRowTag(item)){
