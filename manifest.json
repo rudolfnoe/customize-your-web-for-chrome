@@ -1,6 +1,9 @@
 {
 	"name" : "Customize your web",
 	"version" : "0.1",
+	"icons": {
+	  "48": "resources/cyw48.png"
+	},
 
 	"permissions" : ["storage", "tabs", "webNavigation", "<all_urls>"],
 
@@ -15,6 +18,15 @@
        }
    },
     
+	"browser_action": {
+    "default_icon": {                    // optional
+      "19": "resources/cyw19.png",
+      "38": "resources/cyw38.png"           // optional
+    },
+    "default_title": "Customize your Web",      
+    "default_popup": "popup/popup.html"        // optional
+   },
+	
 	"background" : {
 		"scripts" : ["lib/jquery/jquery-1.9.1.js", "lib/custom/lang/Assert.js",
 				"lib/custom/lang/ArrayUtils.js", 

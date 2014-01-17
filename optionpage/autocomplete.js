@@ -30,6 +30,6 @@
 				  }
 			  }
 		}]
-		$('#onloadJSCode').textcomplete(strategies).focus();
+		$('#onloadJSCode').textcomplete(strategies);
 	});
 })();
