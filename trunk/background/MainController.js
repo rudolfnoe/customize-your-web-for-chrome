@@ -25,29 +25,8 @@ MainController = {
 
       //Listener for commands
       chrome.commands.onCommand.addListener(function(command) {
-        
         console.log('Command:', command);
-        var optionsUrl = chrome.extension.getURL('optionpage/options.html');
-
-        var currentTabIndex = null;
-        chrome.tabs.query({active: true}, function(tabs) {
-            if (tabs.length) {
-               MainController.lastFocusedTabId = tabs[0].id;
-               MainController.lastFocusedTabUrl = tabs[0].url;
-               currentTabIndex = tabs[0].index;
-            }
-        });
-        
-        chrome.tabs.query({url: optionsUrl}, function(tabs) {
-            if (tabs.length) {
-            	  var optionTabId = tabs[0].id
-                 chrome.tabs.move(optionTabId, {index:currentTabIndex+1});
-            	  chrome.tabs.reload(optionTabId);
-                 chrome.tabs.update(optionTabId, {active: true});
-            } else {
-                 chrome.tabs.create({url: optionsUrl, index:currentTabIndex+1});
-            }
-         }); 
+        MainController.openOptionsPage();
       });
       
       console.log('CYW Main Controller set up.')
@@ -59,11 +38,30 @@ MainController = {
    
 	getLastFocusedTabUrl: function(){
 		return this.lastFocusedTabUrl;
+	},
+	
+	openOptionsPage: function(scriptUuid){
+      var currentTabIndex = null;
+      chrome.tabs.query({active: true}, function(tabs) {
+          if (tabs.length) {
+             MainController.lastFocusedTabId = tabs[0].id;
+             MainController.lastFocusedTabUrl = tabs[0].url
+             currentTabIndex = tabs[0].index;
+          }
+      });
+      
+      var optionsUrl = chrome.extension.getURL('optionpage/options.html');
+	   chrome.tabs.query({url: optionsUrl + '*'}, function(tabs) {
+	      optionsUrl += '?script-uuid=' + (scriptUuid?scriptUuid:'new');
+         if (tabs.length) {
+              var optionTabId = tabs[0].id
+              chrome.tabs.move(optionTabId, {index:currentTabIndex+1});
+              chrome.tabs.update(optionTabId, {url:optionsUrl, active: true});
+         } else {
+              chrome.tabs.create({url: optionsUrl, index:currentTabIndex+1});
+         }
+      }); 	   
 	}
-	
-	
-	
-   
 
 } 
 MainController.init();

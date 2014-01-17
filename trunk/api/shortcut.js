@@ -13,7 +13,8 @@
       "pos": "first",
       //one of current, tab, window
       "linkTarget": LinkTarget.CURRENT,
-      "eventScopeSelector": 'window'
+      "eventScopeSelector": 'window',
+      "select":true 
    }
 
    
@@ -30,7 +31,7 @@
          }
          if (settings.selector){
             var clickOptions = {pos:settings.pos, linkTarget:settings.linkTarget};
-            var focusOptions = {pos:settings.pos}
+            var focusOptions = {pos:settings.pos, select:settings.select}
             //JQuery Identifier --> Click it
             callback = function(){
             	//blur first for doing things on blur (bug with apex addon, textarea)

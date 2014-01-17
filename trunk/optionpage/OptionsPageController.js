@@ -7,15 +7,27 @@ OptionPageController = {
 	
    ajustLineNosJSCode: function(){
 		var noOfLines = $('#onloadJSCode').val().split('\n').length
-		noOfLines = Math.max(10, noOfLines);
+		noOfLines = Math.max(10, noOfLines+2);
 		noOfLines = Math.min(30, noOfLines);
 		$('#onloadJSCode').attr('rows', noOfLines);
 	},
 	
 	cancelBtn: function(){
 		this.hideNotification();
-		this.initScriptsTable();
-		this.initForm();
+		if(this.askForSaveingOnChangedForm()){
+	      this.initScriptsTable();
+	      this.initForm();
+		}
+	},
+	
+	askForSaveingOnChangedForm: function(){
+      if (this.scriptChanged){
+         var res = confirm('The script has changed. Press OK for saving it.');
+         if (res){
+            return this.validateAndSaveScript();
+         }
+      }
+      return true;
 	},
 	
 	createScriptFromForm: function(){
@@ -38,11 +50,13 @@ OptionPageController = {
 		this.initForm();
 	},
 	
-	editScript: function(event){
+	editScript: function(scriptUuid){
 		this.hideNotification();
-		$target = $(event.currentTarget);
-		var script = this.cywConfig.getScriptByUUIId($target.attr('data-edit-uuid'));
-		$('#uuid').val(script.getUuid());
+		var script = this.cywConfig.getScriptByUUIId(scriptUuid);
+		if(!script){
+		   alert('No script found for Script-Id: ' + scriptUuid)
+		}
+		$('#uuid').val(scriptUuid);
 		$('#scriptName').val(script.getName());
 		if (script.isDisabled()) {
 		   $('#disabled').prop('checked','checked');
@@ -52,6 +66,7 @@ OptionPageController = {
 		}
 		$('#urls').val(script.getUrlPatternString());
 		$('#onloadJSCode').val(script.getOnloadJavaScript());
+		this.ajustLineNosJSCode();
 		//focus first field
 		$('#scriptName').focus();
 		//reset changed flag
@@ -137,7 +152,7 @@ OptionPageController = {
 		});
 		
 		$(window).on('beforeunload', function(){
-		   if(self.scriptChanged){
+		   if(OptionPageController.scriptChanged){
 		   	   return 'Script has changed! Abord unloading for saving it.';
 		   }
 		});
@@ -145,23 +160,35 @@ OptionPageController = {
 		//Shortcuts
 		shortcut('shift+alt+n', '#scriptName');
 		shortcut('shift+alt+f', '#scriptFilter');
-		shortcut('shift+alt+j', '#onloadJSCode');
+		shortcut('shift+alt+j', {selector:'#onloadJSCode',select:false});
 		shortcut('shift+alt+e', '#exportBtn');
 		shortcut('shift+alt+i', '#importBtn');
 		shortcut('shift+alt+a', '#applyBtn');
 		shortcut('shift+alt+s', '#saveBtn');
 		shortcut('shift+alt+l', '#deleteBtn');
 		shortcut('shift+alt+c', '#cancelBtn');
-		listview('#scripts', 'tr',{shortcut:"shift+alt+p", highlightCss:'background-color:#f5f5f5', mutationObserverSelector:'#scripts'});
+		listview('#scripts', 'tr',{shortcut:"shift+alt+p", highlightCss:'background-color:#f5f5f5', mutationObserverSelector:'#scripts', focusOnLoad:false});
 
 		//Set applied filter
 		$('#scriptFilter').val('applied:');
-		//Render Scrips-Table#
-		this.initScriptsTable();
+
+      //Render Scrips-Table#
+      this.initScriptsTable();
 		
-		$(function(){
-			focus('#scriptFilter');
-		});
+		//Init if script-id is provided
+		var indexOfQuestionMark = window.location.href.indexOf('=');
+		if (indexOfQuestionMark!=-1){
+		   var scriptId = window.location.href.substring(indexOfQuestionMark+1);
+		   
+		   if (scriptId=='new'){
+		      focus('#scriptName', {select:false});
+		   }else{
+		      this.editScript(scriptId);
+		      focus('#onloadJSCode', {select:false});
+		   }
+		}
+
+
 	},
 	
 	initForm: function(){
@@ -188,14 +215,18 @@ OptionPageController = {
 		scripts.forEach(function(script){
 			if (self.isShowScript(script, filterVal)){
 				$('<tr>' +
-				  	'<td><a data-edit-uuid="' + script.uuid + '" href="#"><span class="glyphicon glyphicon-edit"></span></a></td>' +
+				  	'<td><a data-edit-uuid="' + script.uuid + '" ><span class="glyphicon glyphicon-edit"></span></a></td>' +
 				  	'<td><span ' + (script.disabled?'style="color:#999"':'') + '>'+ script.name + '</span></td>' +
 					'<td align="center"><input type="checkbox" name="exportFlag" value="' + script.uuid + '"/></td>' + 
 				'</tr>')
 				.appendTo('#scripts');
 			}
 		});
-		$('a[data-edit-uuid]').on('click', OptionPageController.editScript.bind(this));
+		$('a[data-edit-uuid]').on('click', function(event){
+		   if(self.askForSaveingOnChangedForm()){
+		      OptionPageController.editScript($(event.currentTarget).attr('data-edit-uuid'));
+		   }
+		});
 	},
 	
 	insertAtCaret: function(areaId,text) {
