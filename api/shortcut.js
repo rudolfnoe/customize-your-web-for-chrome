@@ -1,6 +1,7 @@
 (function(){
-   //Single Instance of ShortcutManager
-   var sm = null;
+   //Map of ShortcutManager
+	//Key Selector Value Shortcutmanager Instance
+   var sm = {};
    //Single Instance of ShortStringManager
    var ssm = null;
    
@@ -11,7 +12,8 @@
       "callback" : null,
       "pos": "first",
       //one of current, tab, window
-      "linkTarget": LinkTarget.CURRENT
+      "linkTarget": LinkTarget.CURRENT,
+      "eventScopeSelector": 'window'
    }
 
    
@@ -57,10 +59,11 @@
                return ShortcutManager.SUPPRESS_KEY;
             });
          }else{
-            if (sm == null){
-               sm = new ShortcutManager(window, "keydown", false);
+            if (sm[settings.eventScopeSelector] == null){
+            	var eventScopeElements = settings.eventScopeSelector=='window'?window:$(settings.eventScopeSelector).toArray();
+            	sm[settings.eventScopeSelector] = new ShortcutManager(eventScopeElements, "keydown", null);
             }
-            sm.addShortcut(settings.keyCombination, callback);
+            sm[settings.eventScopeSelector].addShortcut(settings.keyCombination, callback);
          }
       }
 })()
