@@ -1,37 +1,66 @@
-MainController = {
+import "/lib/custom/lang/Assert.js";
+import "/lib/custom/lang/ArrayUtils.js";
+import "/lib/custom/lang/Array.js";
+import "/lib/custom/lang/ObjectUtils.js";
+import "/lib/custom/lang/collections/ArrayList.js";
+import "/lib/custom/lang/collections/Map.js";
+import "/lib/custom/lang/ObjectUtils.js";
+import "/background/UUIDGenerator.js";
+import {Script} from "/datamodel/Script.js";
+import "/datamodel/TargetWinDefinition.js";
+import {CywConfig} from "/background/CywConfig.js";
+import {OptionPageUtils} from "/optionpage/OptionPageUtils.js";
+
+
+const MainController = {
    lastFocusedTabId: null,
    lastFocusedTabUrl: null,
    
-	init: function(){
-		//chrome.webNavigation.onDOMContentLoaded.addListener(MainController.onDomContentLoaded.bind(this));
-      //Listener for messages from content script
-		chrome.runtime.onMessage.addListener(
-				  function(request, sender, sendResponse) {
-				    console.log(sender.tab ?
-				                "from a content script:" + sender.tab.url :
-				                "from the extension");
-				    var scripts = CywConfig.getActiveScriptsForUrl(request.url);
-				    var jsCode = "";
-				    scripts.forEach(function(script){
-				   	 jsCode += "\n try{\n" 
-				   	 	+ script.onloadJavaScript
-				   	   + "} catch(e) {\n"
-				   	   + "\tconsole.error('Error in Script " + script.name + " (" + script.uuid + "): ' + e.message);\n" 
-				   	   + "}";
-				    });
-				    console.log(jsCode);
-				    sendResponse({jsCode: jsCode});
-				  });
-
-      //Listener for commands
-      chrome.commands.onCommand.addListener(function(command) {
-        console.log('Command:', command);
-        MainController.openOptionsPage();
+   init: function(){
+      chrome.runtime.onInstalled.addListener((details) => {
+         console.log("OnInstall: " + details.reason);
+         if (details.reason=='update'){
+            MainController.registerUserScriptController();   
+         }
       });
       
-      console.log('CYW Main Controller set up.')
-	},
-   
+      //Listener for commands
+      chrome.commands.onCommand.addListener(function(command) {
+         console.log('Command:', command);
+         if (command == "open-configuration"){
+            OptionPageUtils.openOptionsPage();
+         }else if(command == "reload-extension"){
+            chrome.runtime.reload();
+         }
+      });
+
+      chrome.runtime.onMessage.addListener(function(message){
+         //Reload Scripts from Storage
+         CywConfig.init();
+      })
+      
+      chrome.runtime.onUserScriptMessage.addListener(
+         function(request, sender, sendResponse) {
+            console.log(sender.tab ?
+                        "from a content script:" + sender.tab.url :
+                        "from the extension");
+            let scriptsPromise = CywConfig.getActiveScriptsForUrl(request.url);
+            scriptsPromise.then((scripts) => {
+               var jsCode = "";
+               scripts.forEach(function(script){
+                  jsCode += "\n try{\n" 
+                     + script.onloadJavaScript
+                    + "} catch(e) {\n"
+                    + "\tconsole.error('Error in Script " + script.name + " (" + script.uuid + "): ' + e.message);\n" 
+                    + "}";
+               });
+               //console.log(jsCode);
+               sendResponse({jsCode: jsCode});
+            })
+      });
+   },
+      
+      
    getLastFocusedTabId: function(){
       return this.lastFocusedTabId;
    },
@@ -39,29 +68,54 @@ MainController = {
 	getLastFocusedTabUrl: function(){
 		return this.lastFocusedTabUrl;
 	},
-	
-	openOptionsPage: function(scriptUuid){
-      var currentTabIndex = null;
-      chrome.tabs.query({active: true}, function(tabs) {
-          if (tabs.length) {
-             MainController.lastFocusedTabId = tabs[0].id;
-             MainController.lastFocusedTabUrl = tabs[0].url
-             currentTabIndex = tabs[0].index;
-          }
-      });
-      
-      var optionsUrl = chrome.extension.getURL('optionpage/options.html');
-	   chrome.tabs.query({url: optionsUrl + '*'}, function(tabs) {
-	      optionsUrl += '?script-uuid=' + (scriptUuid?scriptUuid:'new');
-         if (tabs.length) {
-              var optionTabId = tabs[0].id
-              chrome.tabs.move(optionTabId, {index:currentTabIndex+1});
-              chrome.tabs.update(optionTabId, {url:optionsUrl, active: true});
-         } else {
-              chrome.tabs.create({url: optionsUrl, index:currentTabIndex+1});
-         }
-      }); 	   
-	}
 
+   registerUserScriptController: async function(){
+      chrome.userScripts.configureWorld({
+         csp: "script-src 'self' 'unsafe-eval'",
+         messaging: true
+      });
+      let userScripts = ["temp/loadstart.js",
+			"lib/jquery/jquery-3.7.1.min.js",
+			"lib/jquery-plugins/filter-extensions/filter-extensions.js",
+			"lib/jquery-plugins/textcomplete/jquery.textcomplete.js",
+			"lib/custom/lang/Assert.js",
+			"lib/custom/lang/ObjectUtils.js",
+			"lib/custom/lang/StringUtils.js",
+			"lib/custom/lang/event/AbstractGenericEventHandler.js",
+			"lib/custom/dom/DomUtils.js",
+			"lib/custom/dom/CssUtils.js",
+			"lib/custom/dom/LinkWrapper.js",
+			"lib/custom/dom/ElementWrapper.js",
+			"lib/custom/util/Utils.js",
+			"lib/custom/ui/shortcuts/KeyCodeMapper.js",
+			"lib/custom/ui/shortcuts/ShortcutCommands.js",
+			"lib/custom/ui/shortcuts/AbstractShortcutManager.js",
+			"lib/custom/ui/shortcuts/Shortcutmanager2.js",
+			"lib/custom/ui/shortcuts/ShortStringManager.js",
+			"api/api_helper.js",
+			"api/enumerations.js",
+			"api/shortcut.js",
+			"api/focus.js",
+			"api/click.js",
+			"api/utils.js",
+			"api/val.js",
+			"api/list_view_handler.js",
+			"api/listview.js",
+         "userScript/UserScriptController.js",
+			"temp/loadend.js"];
+      let registeredScripts = []
+      for (const script of userScripts){
+         registeredScripts.push({file: script})
+      }
+      console.log(registeredScripts)
+      await chrome.userScripts.register([{
+         id: "CustomizeYourWeb",
+         matches: ["*://*/*"],
+         js: registeredScripts,
+         allFrames: true,
+         runAt: "document_end"
+      }]);
+      console.log('CYW: UserScript successfully installed')
+   }
 } 
 MainController.init();

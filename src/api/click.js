@@ -29,18 +29,16 @@
    };
 
    function performEvent(target, type, modifierMask, button){
-      var clickEvent = document.createEvent("MouseEvents");
-      clickEvent.initMouseEvent(type, //type
-                              true, //canBubble
-                              true, //cancelable
-                              window, //view
-                              1, //click count
-                              0, 0, 0, 0, //screenX, screenY, clientX, clientY,
-                              modifierMask & ShortcutManager.CTRL, 
-                              modifierMask & ShortcutManager.ALT, 
-                              modifierMask & ShortcutManager.SHIFT, 
-                              false,
-                              button, null); //relatedTarget
+      let clickEvent = new MouseEvent(type, {
+         screenX: 0,
+         screenY: 0,
+         clientX: 0,
+         clientY: 0,
+         ctrlKey: modifierMask & ShortcutManager.CTRL, 
+         altKey: modifierMask & ShortcutManager.ALT, 
+         shiftKey: modifierMask & ShortcutManager.SHIFT, 
+         button: button
+      })
       return target.dispatchEvent(clickEvent)?1:0
    }
    

@@ -1,10 +1,11 @@
 (function(){
    var defaultSettings = {
       "focusOnLoad": true,
-      "highlightCss": 'background-color:#A0E0F0',
+      "highlightCss": 'background-color:#dee8f7',
       "linkTarget": LinkTarget.CURRENT,
       "noOfHeaderRows": 1,
       "linkNoToOpen" : 1,
+      "linkSelectorToOpen" : null,
       "shortcut": null,
       "pos": "first",
       "mutationObserverSelector": null
@@ -45,15 +46,15 @@
       }
       if (mutationObeserRootNode) {
    		this.mutationObserver.observe(mutationObeserRootNode, {childList:true, subtree:true});
-   	}
-   	
-   	if (rootNode) {
-   		this.init();
-   	}
+	  }
+	
+	  if (rootNode) {
+		this.init();
+	  }
    };
    
    ListViewAction.prototype.init = function(){
-      console.log('listview init')
+      //console.log('listview init')
       if(this.listviewHandler){
          this.listviewHandler.destroy();
       }
@@ -66,7 +67,7 @@
       if (this.settings.noOfHeaderRows > 0){
       	$listItems = $listItems.filter(':gt(' + (this.settings.noOfHeaderRows-1) + ')');
       }
-      this.listviewHandler = new ListViewHandler(rootElement, $listItems.toArray(), this.settings.highlightCss, this.settings.linkTarget, this.settings.linkNoToOpen);
+      this.listviewHandler = new ListViewHandler(rootElement, $listItems.toArray(), this.settings.highlightCss, this.settings.linkTarget, this.settings.linkSelectorToOpen!=null?this.settings.linkSelectorToOpen:this.settings.linkNoToOpen);
       if(this.settings.focusOnLoad){
          focus(this.rootElementSelector);
       }

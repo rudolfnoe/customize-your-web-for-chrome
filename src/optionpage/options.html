@@ -4,16 +4,12 @@
 	<title>Settings</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Bootstrap -->
-	<link href="../../lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-	<script src="../../lib/jquery/jquery-1.9.1.js"></script>
-	<script src="../../lib/mutation-summary/mutation_summary.js"></script>
-	<script src='../../lib/jquery-plugins/textcomplete/jquery.textcomplete.js'></script>
-	<script src="../../lib/bootstrap/js/bootstrap.js"></script>
-	<script type="text/javascript" src="../datamodel/Script.js"></script>
-	<script type="text/javascript" src="OptionsPageController.js"></script>
-	<script type="text/javascript" src="../common/utils/UrlUtils.js"></script>
-	<script type="text/javascript" src="../datamodel/TargetWinDefinition.js"></script>
-	<script type="text/javascript" src="../datamodel/Script.js"></script>
+	<link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="../lib/bootstrap/css/bootstrap-icons.min.css" rel="stylesheet">
+	<script src="../lib/jquery/jquery-3.7.1.min.js"></script>
+	<script src="../lib/jquery/jquery-ui.min.js"></script>
+	<script src='../lib/jquery-plugins/textcomplete/jquery.textcomplete.js'></script>
+	<script type="module" src="OptionsPageController.js"></script>
 	<script type="text/javascript" src="../lib/custom/lang/Assert.js"></script>
 	<script type="text/javascript" src="../lib/custom/lang/ObjectUtils.js"></script>
 	<script type="text/javascript" src="../lib/custom/lang/StringUtils.js"></script>
@@ -36,7 +32,8 @@
 	<script type="text/javascript" src="../api/click.js"></script>
 	<script type="text/javascript" src="../api/list_view_handler.js"></script>
 	<script type="text/javascript" src="../api/listview.js"></script>
-	<link type="text/css" rel="stylesheet" href='../../lib/jquery-plugins/textcomplete/jquery.textcomplete.css'/>
+	<link type="text/css" rel="stylesheet" href='../lib/jquery-plugins/textcomplete/jquery.textcomplete.css'/>
+	<link type="text/css" rel="stylesheet" href='../lib/jquery-plugins/textcomplete/jquery.textcomplete.css'/>
 	<style type="text/css">
 	  .highlightRed{
 	     color:red;
@@ -44,13 +41,32 @@
 	  .redBorder{
 	     border: 1px solid red;
 	  }
+	  .row, .col-lg-2, .col-lg-3, .col-lg-7, .col-lg-9, .col-lg-12{
+		padding:5px !important;
+	  }
+	  .form-control, .form-check-input{
+		border-color: #cccccc !important;
+	  }
 	</style>
 	
 </head>
 <body>
-	<div class="container">
-		<div class="page-header">
-			<h1>Customize your Web Settings</h1>
+	<div class="container pt-3">
+		<div class="row" style="height:60px">
+			<div class="page-header col-lg-6">
+				<h1>Customize your Web Settings</h1>
+			</div>
+			<div class="page-header col-lg-6">
+				<div id="alert" class="row d-none">
+					<div class="col-3">
+					</div>
+					<div class="col-6">
+						<div class="alert"></div>
+					</div>
+					<div class="col-3">
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-lg-3">
@@ -60,7 +76,7 @@
 						<div class="input-group">
 							<input id="scriptFilter" type="text" class="form-control">
 							<div class="input-group-btn">
-								<button id="filterBtn" class="btn btn-default">Go</button>
+								<button id="filterBtn" class="btn btn-secondary">Go</button>
 							</div>
 					    </div>
 					</div>
@@ -70,57 +86,40 @@
 						<tr>
 							<td></td>
 							<td><b>Script Name</b></td>
-							<td align="center"><b><input type="checkbox" id="toggleAllChb"/></b></td>
+							<td align="center"><b><input type="checkbox" id="toggleAllChb" /></b></td>
 						</tr>
 					</table>
 				</div>
-				<div class="row">
-					<div class="col-xs-12 form-group">
-						<button id="exportBtn" class="btn btn-default">Export</button>
-						<button id="importBtn" class="btn btn-default">Import</button>
-					</div>				</div>
+				<div class="row mt-3">
+					<div class="col-xs-12 form-group text-center">
+						<button id="exportBtn" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exportDlg" data-bs-backdrop="false">Export</button>
+						<button id="importBtn" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exportDlg">Import</button>
+					</div>				
+				</div>
 				<!-- /input-group -->
 			</div>
-			<div class="col-lg-9" id="scriptForm">
-				<div id="alert" class="row hidden">
-					<div class="col-lg-3">
-					</div>
-					<div class="col-lg-6">
-						<div class="alert"></div>
-					</div>
-					<div class="col-lg-3">
-					</div>
-				</div>
+			<div class="col-lg-9" id="scriptForm" style="padding-left:30px !important">
 				<div class="row">
 					<div class="col-lg-7">
-						<div class="form-group">
-							<label for="scriptName">Script <u>N</u>ame</label> <input type="text"
-								class="form-control" id="scriptName" placeholder="Script Name">
-						</div>
+						<label for="scriptName">Script <u>N</u>ame</label> 
+						<input type="text" class="form-control" id="scriptName" placeholder="Script Name">
 					</div>
-					<div class="col-lg-2">
-						<div class="form-group" >
-						   <label for="disabled"></label>
-							<div class="checkbox">
-						    <label>
-						      <input type="checkbox" id="disabled"><label for="disabled">Disabled</label>
-						    </label>
-						  </div>
-						</div>
+					<div class="col-lg-2" style="padding-top:35px !important">
+						<input type="checkbox"  class="form-check-input" id="disabled">
+						<label class="form-check-label" for="disabled">Disabled</label>
 					</div>
 					<div class="col-lg-3">
-						<div class="form-group">
-							<label for="uuid">UUId</label> <input type="text"
-								class="form-control" id="uuid" readonly tabindex="-1">
-						</div>
+						<label for="uuid">UUId</label> 
+						<input type="text" class="form-control" id="uuid" readonly tabindex="-1">
 					</div>
 				</div>
 				<div class="row">
 					<div class="form-group col-xs-12">
-						<div class="input-group col-xs-12">
-							<label for="urls">Include-/Exclude-URLs</label>
-							<textarea id="urls" rows="4" class="form-control col-xs-12"></textarea>
-						</div>
+						<label for="urls">Include-/Exclude-URL-Patterns</label>
+						<textarea id="urls" rows="4" class="form-control" placeholder="https://&lt;domain&gt;/*&#10;-https://&lt;domain&gt;/notaffected/*""></textarea>
+						<small id="urlsHelpBlock" class="form-text text-muted">
+							Put every pattern on a separate line. Use "*" as wildcard. For excludes put "-" in front of the pattern.
+						</small>
 					</div>
 				</div>
 				<div class="row">
@@ -128,28 +127,28 @@
 						<div class="input-group col-xs-12">
 							<label for="onloadJSCode"><u>J</u>avaScript Code</label>
 							<textarea id="onloadJSCode" rows="10" cols="200"
-								class="form-control col-xs-12" style="white-space: pre;font-family:monospace"></textarea>
+								class="form-control col-xs-12" style="height:450px; max-height:450px; white-space: pre;font-family:monospace; overflow-y:scroll"></textarea>
 						</div>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row mt-3">
 					<div class="col-xs-12">
-						<button id="applyBtn" class="btn btn-default"><u>A</u>pply & Test</button>
-						<button id="saveBtn" class="btn btn-default"><u>S</u>ave</button>
-						<button id="deleteBtn" class="btn btn-default">De<u>l</u>ete</button>
-						<button id="cancelBtn" class="btn btn-default"><u>C</u>ancel</button>
+						<button id="saveBtn" class="btn btn-primary"><u>S</u>ave</button>
+						<button id="applyBtn" class="btn btn-secondary"><u>A</u>pply & Test</button>
+						<button id="deleteBtn" class="btn btn-secondary">De<u>l</u>ete</button>
+						<button id="cancelBtn" class="btn btn-secondary"><u>C</u>ancel</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- Model Export Dialog -->
-	<div class="modal" id="exportDlg" >
-	  <div class="modal-dialog" style="width:70%">
+	<div class="modal fade" id="exportDlg" role="dialog" data-bs-backdrop="false">
+	  <div class="modal-dialog modal-lg"  role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	        <h4 class="modal-title">Import / Export Scripts</h4>
+			  <h4 class="modal-title">Import / Export Scripts</h4>
+			  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	      </div>
 	      <div class="modal-body">
 	        <div class="container">
@@ -164,12 +163,14 @@
 	        </div>
 	      </div>
 	      <div class="modal-footer">
-	        <button id="importBtnDlg" type="button" class="btn btn-default">Import</button>
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button id="importBtnDlg" type="button" class="btn btn-primary">Import</button>
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-	<iframe id="validate-iframe" style="display:none" src="validate_js_code.html"></iframe>
+    <iframe id="validate-iframe" style="display:none" src="validate_js_code.html"></iframe>
+	<script src="../../lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+0

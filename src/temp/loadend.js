@@ -1,4 +1,4 @@
 /**
  * 
  */
-console.log((new Date()).getTime() - start);
+console.log('CYW init took: ' + ((new Date()).getTime() - start) + " ms");

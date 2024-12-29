@@ -14,7 +14,7 @@
       //one of current, tab, window
       "linkTarget": LinkTarget.CURRENT,
       "eventScopeSelector": 'window',
-      "select":true 
+      "select":true
    }
 
    
@@ -64,7 +64,11 @@
             	var eventScopeElements = settings.eventScopeSelector=='window'?window:$(settings.eventScopeSelector).toArray();
             	sm[settings.eventScopeSelector] = new ShortcutManager(eventScopeElements, "keydown", null);
             }
-            sm[settings.eventScopeSelector].addShortcut(settings.keyCombination, callback);
+            sm[settings.eventScopeSelector].addShortcut(settings.keyCombination, function(){
+               callback();
+               //Prevent default 
+               return ShortcutManager.SUPPRESS_KEY;
+            });
          }
       }
 })()

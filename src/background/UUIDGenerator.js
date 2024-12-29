@@ -1,4 +1,4 @@
-UUIDGenerator = {
+export const UUIDGenerator = {
 	/* randomUUID.js - Version 1.0
 	 * 
 	 * Copyright 2008, Robert Kieffer

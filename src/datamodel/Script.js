@@ -1,4 +1,6 @@
-function Script(){
+import {TargetWinDefinition} from "./TargetWinDefinition.js";
+
+export function Script(){
 	this.uuid = null;
 	this.name = null;
 	this.targetWinDefinition = new TargetWinDefinition();
@@ -7,7 +9,11 @@ function Script(){
 }
 
 Script.createFromJson = function(jsonObj){
-   var newScript = $.extend((new Script()), jsonObj);
+   let newScript = new Script();
+   newScript.uuid = jsonObj.uuid;
+   newScript.name = jsonObj.name;
+   newScript.onloadJavaScript = jsonObj.onloadJavaScript;
+   newScript.disabled = jsonObj.disabled;
    newScript.targetWinDefinition = TargetWinDefinition.createFromJson(jsonObj.targetWinDefinition)
    return newScript;
 };
@@ -45,8 +51,8 @@ Script.prototype = {
       return this.targetWinDefinition.getUrlPatternString();
    },
    
-   setUrlPatterns: function(includeUrlPatternString, excludeUrlPatternString){
-      this.targetWinDefinition = new TargetWinDefinition(includeUrlPatternString, excludeUrlPatternString);
+   setUrlPatternString: function(urlPatternString){
+      this.targetWinDefinition = new TargetWinDefinition(urlPatternString);
    },
    
    getUuid: function(){

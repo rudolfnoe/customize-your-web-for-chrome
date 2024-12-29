@@ -348,6 +348,7 @@ with(this){
                                            && !element.readonly ) ||
                                          (element.ownerDocument &&
                                           element.ownerDocument.designMode=="on") ||
+										  element.isContentEditable ||
                                           element.ownerDocument.body.isContentEditable ||
                                          //For performance reasons this comes at the end
                                          ( (tagName == "INPUT") &&

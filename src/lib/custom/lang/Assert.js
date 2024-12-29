@@ -1,4 +1,4 @@
-Assert = {
+const Assert = {
    
    fail: function(message){
       this.isTrue(false, message)   

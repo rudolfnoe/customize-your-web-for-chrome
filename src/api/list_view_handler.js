@@ -3,12 +3,13 @@
    const EVENT_TYPES_FOR_ROOT_CAPTURE_FALSE = ["focus"];
    const CURRENT_INDEX_ATTR = 'cyw_currentIndex';
    
-   ListViewHandler = function (rootElement, listItems, highlightCss, defaultLinkTarget, linkNoToOpen){
+   ListViewHandler = function (rootElement, listItems, highlightCss, defaultLinkTarget, linkNoOrSelectorToOpen){
       Assert.paramsNotNull(arguments)
       this.currentIndex = 0
       this.currentItemWrapper = null
       this.defaultLinkTarget = defaultLinkTarget
-      this.linkNoToOpen = linkNoToOpen
+      this.linkNoToOpen = typeof linkNoOrSelectorToOpen == "number"?linkNoOrSelectorToOpen:null;
+      this.linkSelector = typeof linkNoOrSelectorToOpen == "string"?linkNoOrSelectorToOpen:null;
       this.focused = false
       this.highlightCss = highlightCss
       this.listItems = listItems
@@ -22,8 +23,8 @@
       this.scm = new ShortcutManager(rootElement, "keydown", true)
       //ElementWrappers for td-tags with non-transparent background
       this.currentTdTagWrappers = []
-      this.registerMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_TRUE, true)
-      this.registerMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_FALSE, false)
+      this.registerMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_TRUE, false)
+      this.registerMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_FALSE, true)
       this.initShortcuts()
    };
    
@@ -42,6 +43,7 @@
          }
       },
       destroy: function(){
+		 //console.log('listview destroy')
          this.unRegisterMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_TRUE, true)
          this.unRegisterMultipleEventListener(this.rootElement, EVENT_TYPES_FOR_ROOT_CAPTURE_FALSE, false)
          this.scm.destroy()
@@ -61,7 +63,7 @@
             linkToOpen.dispatchEvent(uiEvent)
          }*/
       },
-      focusListView: function(){
+      focusListView: function(event){
          if(!this.focused){
             this.updateHighlighting(this.currentIndex, true)
          }
@@ -76,13 +78,19 @@
          return this.listItems.length-1
       },
       getLinkToOpen: function(){
-         var links = $(this.getCurrentItem()).find('a').andSelf().filter('a');
-         if(links.length==0){
-            return null
-         }else if(links.length >= this.linkNoToOpen){
-            return links[this.linkNoToOpen-1]
+         if (this.linkNoToOpen){
+            var links = $(this.getCurrentItem()).find('a').addBack().filter('a');
+            if(links.length==0){
+               return null;
+            }else if(links.length >= this.linkNoToOpen){
+               return links[this.linkNoToOpen-1]
+            }else{
+               throw new Error("Link number to open exceeds number of available links within the item. Please correct ListView configuration.");
+            }
+         }else if(this.linkSelector){
+            return $(this.getCurrentItem()).find(this.linkSelector).get(0);
          }else{
-            throw new Error("Link number to open exceeds number of available links within the item. Please correct ListView configuration.")
+            throw new Error("Link to open parameter wrong");
          }
       },
       handleFocusout: function(event){
@@ -92,16 +100,18 @@
       	}, 10);
       },
       handleFocus: function(event){
-         this.focusListView();
+		  //console.log('listview on focus');
+         this.focusListView(event);
       },
       handleClick: function(event){
+		  //console.log('listview on click');
          var targetElement = event.target
          var element = DomUtils.getAncestorBy(targetElement, Utils.bind(function(parentNode){
             return (parentNode==this.rootElement || this.listItems.indexOf(parentNode)!=-1)?true:false
          }, this))
          if(element==null || element==this.rootElement)
             return
-         this.updateHighlighting(this.listItems.indexOf(element), false)
+         this.updateHighlighting(this.listItems.indexOf(element), true)
          if(DomUtils.isEditableElement(targetElement)){
             //As focus will be on row change focus back to element 
             targetElement.focus()

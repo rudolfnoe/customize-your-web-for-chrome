@@ -1,6 +1,7 @@
+import {UrlUtils} from "/common/utils/UrlUtils.js"
 const URL_DOMAIN_PART_REG_EXP = /^\w{1,}:\/\/(\w|\.){1,}/;
 
-function TargetWinDefinition(urlPatternString){
+export function TargetWinDefinition(urlPatternString){
    this.urlPatternString = urlPatternString;
    this.includeUrlPatternsRegExp = [];
    this.excludeUrlPatternsRegExp = [];
@@ -10,9 +11,7 @@ function TargetWinDefinition(urlPatternString){
 }
 
 TargetWinDefinition.createFromJson = function(jsonObj){
-   var newTargetWinDefintion = $.extend((new TargetWinDefinition()), jsonObj);
-   newTargetWinDefintion.updateUrlPatternRegExp();
-   return newTargetWinDefintion;
+   return new TargetWinDefinition(jsonObj.urlPatternString);
 }
 
 TargetWinDefinition.prototype = {

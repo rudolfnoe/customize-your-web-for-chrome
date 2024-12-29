@@ -1,4 +1,8 @@
-CywConfig = {
+import {UUIDGenerator} from "../background/UUIDGenerator.js";
+import {TargetWinDefinition} from "../datamodel/TargetWinDefinition.js"
+import {Script} from "../datamodel/Script.js"
+
+export const CywConfig = {
    
    //Flag indicating wether performance log is activated
    perfLogActive: false,
@@ -6,16 +10,15 @@ CywConfig = {
    //To detect from where observer notifcation comse from
    id: (new Date()).getTime(),
    
-   
    cloneScript: function(script){
       return ObjectUtils.deepClone(script)
    },
    
-   deleteScript: function(scriptUuid){
+   deleteScript: function(scriptId){
    	var found = false;
    	for(var i=0; i<this.scripts.length;i++){
-   		if(this.scripts[i].uuid==scriptUuid){
-   			this.scripts = this.scripts.removeAtIndex(i);
+   		if(this.scripts[i].uuid==scriptId){
+   			this.scripts.splice(i, 1);
    			var found = true;
             break;
    		}
@@ -29,23 +32,27 @@ CywConfig = {
    /* 
     * Return Array of scripts matching the provied url
     */
-   getActiveScriptsForUrl: function(url){
-      var result = new Array()
-      for (var i = 0; i < this.scripts.length; i++) {
-         var script = this.scripts[i]
-         if(script.matchUrl(url) && !script.isDisabled()){
-            result.push(script);
+   getActiveScriptsForUrl: async function(url){
+      var result = []
+      let scripts =  await this.getScripts();
+      try{
+         for (const script of scripts) {
+            if(script.matchUrl(url) && !script.isDisabled()){
+               result.push(script);
+            }
          }
+      }catch(e){
+         console.error('Error on getActiveScriptsForUrl: ' + e.stack)
       }
       return result
    },
    
    
    //Checks wether script with given guiId already exists
-   getScriptByUUIId: function(uuid){
-      for (var i = 0; i < this.scripts.length; i++) {
-         var script = this.scripts[i]
-         if(script.uuid==uuid){
+   getScriptById: async function(id){
+      let scripts = await this.getScripts();
+      for (const script of scripts) {
+         if(script.uuid==id){
             return script
          }
       }
@@ -78,30 +85,32 @@ CywConfig = {
       return matchingScripts
    },
    
-   getScripts: function(){
+   getScripts: async function(){
+      if (this.scripts.length == 0){
+         await this.init();
+      }
    	return this.scripts;
    },
-   
-   init: function(){
+
+   init: async function(){
    	var self = this;
    	console.log('CywConfig.init');
-      chrome.storage.local.get('scripts', function(storageObj){
-         self.scripts = []
-         for(var i=0; i<storageObj.scripts.length; i++){
-            self.scripts.push(Script.createFromJson(storageObj.scripts[i]));
-         }
-   		console.log('CYW Scripts count: '+ self.scripts.length);
-   	});
+      let storageObj = await chrome.storage.local.get('scripts');
+      self.scripts = []
+      for(var i=0; i<storageObj.scripts.length; i++){
+         self.scripts.push(Script.createFromJson(storageObj.scripts[i]));
+      }
+      console.log('CYW Scripts count: '+ self.scripts.length);
    },
-   
-   saveScript: function(aScript){
-   	if(aScript.uuid == null || aScript.uuid.length == 0){
-   		aScript.uuid = UUIDGenerator.randomUUID();
+
+   saveScript: async function(aScript){
+      if(aScript.uuid == null || aScript.uuid.length == 0){
+         aScript.uuid = UUIDGenerator.randomUUID();
    		this.scripts.push(aScript);
    	}else{
-   		var found = false;
+         var found = false;
    		for(var i=0; i<this.scripts.length;i++){
-   			var oldScript = this.scripts[i];
+            var oldScript = this.scripts[i];
    			if (oldScript.uuid == aScript.uuid){
    				this.scripts[i] = aScript;
    				found = true;
@@ -109,23 +118,19 @@ CywConfig = {
    			}
    		}
    		if (!found){
-   			this.scripts.push(aScript);
+            this.scripts.push(aScript);
    		}
    	}
-   	this.saveScripts();
-      //Return updated Script
+   	await this.saveScripts();
+      console.log('CywConfig.saveScript ended');
       return aScript;
    },
    
-   saveScripts: function(){
-   	chrome.storage.local.set({'scripts': this.scripts}, function() {
-     	    // Notify that we saved.
-     	    console.log('CYW: Scripts successfully saved');
-   	});   
+   saveScripts: async function(){
+   	await chrome.storage.local.set({'scripts': this.scripts})
+     	// Notify that we saved.
+      console.log('CYW: Scripts successfully saved');
    }
-   
-  
 };
    
   
-CywConfig.init();
