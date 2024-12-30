@@ -1,4 +1,10 @@
 # Customize your Web
+
+## Prerequisites
+As this extension uses so called User-Scripts, you must enable the extension developer mode. To do this 
+1. Go to the Extensions page by entering chrome://extensions in a new tab. (By design chrome:// URLs are not linkable.)
+2. Enable Developer Mode by clicking the toggle switch next to Developer mode.
+
 ## Basic Concept
 Customize your Web lets you customize any website through the declaration of small JavaScript Code-Snippets. It differes from other UserScript-Managers that it offers an API for common customizations and addiontionally injects jQuery for more advanced customizations. The main purpose of the API is to provide an easy manner to define keyboard shortcuts and listviews for keyboard navigation.
 

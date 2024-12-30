@@ -131,6 +131,10 @@ const OptionPageController = {
 		var self = this;
 		this.validateIframeWin = $('#validate-iframe').get(0).contentWindow
 		
+		//Check if dev-mode is enabled
+		if (!this.isUserScriptsAvailable()){
+			$('#developer-mode-alert').removeClass('d-none');
+		}
 		//Event-Handler
 		$('#toggleAllChb').on('click', OptionPageController.toggleAllCheckboxes.bind(this));
 	    $('#exportBtn').on('click', OptionPageController.showExportDialog.bind(this));
@@ -376,7 +380,18 @@ const OptionPageController = {
 
    notifyMainController: function(){
 		chrome.runtime.sendMessage(null,{code:"reload-scripts"})
-   }
+   },
+
+   isUserScriptsAvailable: function() {
+	try {
+	  // Property access which throws if developer mode is not enabled.
+	  chrome.userScripts;
+	  return true;
+	} catch {
+	  // Not available.
+	  return false;
+	}
+  }   
 	
 }
 

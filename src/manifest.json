@@ -1,9 +1,10 @@
 {
-	"name" : "Customize your web v3",
-	"version" : "0.3",
+	"name" : "Customize your Web",
+	"version" : "1.0.0",
 	"icons": {
 	  "48": "resources/cyw48.png"
 	},
+	"description":"Customize your Web is a kind of lightweight UserScript Manager, which addionally provides an API for shortcuts and listviews.",
 
 	"permissions" : ["storage", "tabs", "webNavigation", "userScripts"],
 
