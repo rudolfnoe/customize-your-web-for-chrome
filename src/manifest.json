@@ -6,7 +6,7 @@
 	},
 	"description":"Customize your Web is a kind of lightweight UserScript Manager, which addionally provides an API for shortcuts and listviews.",
 
-	"permissions" : ["storage", "tabs", "webNavigation", "userScripts"],
+	"permissions" : ["storage", "tabs", "userScripts"],
 
 	"host_permissions":[
 		"*://*/*"
