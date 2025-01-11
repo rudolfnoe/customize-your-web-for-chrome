@@ -71,7 +71,7 @@ const MainController = {
 
    registerUserScriptController: async function(){
       chrome.userScripts.configureWorld({
-         csp: "script-src 'self' 'unsafe-eval'",
+         csp: "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
          messaging: true
       });
       let userScripts = ["temp/loadstart.js",
