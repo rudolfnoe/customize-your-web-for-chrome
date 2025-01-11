@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Settings</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Bootstrap -->
+	<link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="../lib/bootstrap/css/bootstrap-icons.min.css" rel="stylesheet">
+	<script src="../lib/jquery/jquery-3.7.1.min.js"></script>
+	<script src="../lib/jquery/jquery-ui.min.js"></script>
+	<script src='../lib/jquery-plugins/textcomplete/jquery.textcomplete.js'></script>
+	<script type="module" src="OptionsPageController.js"></script>
+	<script type="text/javascript" src="../lib/custom/lang/Assert.js"></script>
+	<script type="text/javascript" src="../lib/custom/lang/ObjectUtils.js"></script>
+	<script type="text/javascript" src="../lib/custom/lang/StringUtils.js"></script>
+	<script type="text/javascript" src="../lib/custom/lang/event/AbstractGenericEventHandler.js"></script>
+	<script type="text/javascript" src="../lib/custom/dom/DomUtils.js"></script>
+	<script type="text/javascript" src="../lib/custom/dom/CssUtils.js"></script>
+	<script type="text/javascript" src="../lib/custom/dom/LinkWrapper.js"></script>
+	<script type="text/javascript" src="../lib/custom/dom/ElementWrapper.js"></script>
+	<script type="text/javascript" src="../lib/custom/ui/shortcuts/KeyCodeMapper.js"></script>
+	<script type="text/javascript" src="../lib/custom/ui/shortcuts/ShortcutCommands.js"></script>
+	<script type="text/javascript" src="../lib/custom/ui/shortcuts/AbstractShortcutManager.js"></script>
+	<script type="text/javascript" src="../lib/custom/ui/shortcuts/Shortcutmanager2.js"></script>
+	<script type="text/javascript" src="../lib/custom/ui/shortcuts/ShortStringManager.js"></script>
+	<script type="text/javascript" src="../lib/custom/util/Utils.js"></script>
+	<script type="text/javascript" src="autocomplete.js"></script>
+	<script type="text/javascript" src="../api/enumerations.js"></script>
+	<script type="text/javascript" src="../api/api_helper.js"></script>
+	<script type="text/javascript" src="../api/shortcut.js"></script>
+	<script type="text/javascript" src="../api/focus.js"></script>
+	<script type="text/javascript" src="../api/click.js"></script>
+	<script type="text/javascript" src="../api/list_view_handler.js"></script>
+	<script type="text/javascript" src="../api/listview.js"></script>
+	<link type="text/css" rel="stylesheet" href='../lib/jquery-plugins/textcomplete/jquery.textcomplete.css'/>
+	<link type="text/css" rel="stylesheet" href='../lib/jquery-plugins/textcomplete/jquery.textcomplete.css'/>
+	<style type="text/css">
+	  .highlightRed{
+	     color:red;
+	  }
+	  .redBorder{
+	     border: 1px solid red;
+	  }
+	  .row, .col-lg-2, .col-lg-3, .col-lg-7, .col-lg-9, .col-lg-12{
+		padding:5px !important;
+	  }
+	  .form-control, .form-check-input{
+		border-color: #cccccc !important;
+	  }
+	</style>
+	
+</head>
+<body>
+	<div class="container pt-3">
+		<div class="row" style="height:60px">
+			<div class="page-header col-lg-6">
+				<h1>Customize your Web Settings</h1>
+			</div>
+			<div class="page-header col-lg-6">
+				<div id="alert" class="row d-none">
+					<div class="col-3">
+					</div>
+					<div class="col-6">
+						<div class="alert"></div>
+					</div>
+					<div class="col-3">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="developer-mode-alert" class="row d-none">
+			<div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+				<strong>Developer Mode is not enabled!</strong><br> To use this extension you have to enable the Extension Developer-Mode.<br>
+					Open chrome://extensions by copy- & pasting it into the adress bar and pressing enter.<br>Then enable the Developer Mode by clicking the toggle switch next to Developer mode in the upper right corner.
+			</div>					
+		</div>
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="row">
+					<div class="col-lg-12 form-group">
+						<label for="scriptFilter"><u>F</u>ilter</label>
+						<div class="input-group">
+							<input id="scriptFilter" type="text" class="form-control">
+							<div class="input-group-btn">
+								<button id="filterBtn" class="btn btn-secondary">Go</button>
+							</div>
+					    </div>
+					</div>
+				</div>
+				<div class="row" style="max-height:650px; overflow-y:auto">
+					<table id="scripts" class="table table-striped table-bordered">
+						<tr>
+							<td></td>
+							<td><b>Script Name</b></td>
+							<td align="center"><b><input type="checkbox" id="toggleAllChb" /></b></td>
+						</tr>
+					</table>
+				</div>
+				<div class="row mt-3">
+					<div class="col-xs-12 form-group text-center">
+						<button id="exportBtn" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exportDlg" data-bs-backdrop="false">Export</button>
+						<button id="importBtn" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exportDlg">Import</button>
+					</div>				
+				</div>
+				<!-- /input-group -->
+			</div>
+			<div class="col-lg-9" id="scriptForm" style="padding-left:30px !important">
+				<div class="row">
+					<div class="col-lg-7">
+						<label for="scriptName">Script <u>N</u>ame</label> 
+						<input type="text" class="form-control" id="scriptName" placeholder="Script Name">
+					</div>
+					<div class="col-lg-2" style="padding-top:35px !important">
+						<input type="checkbox"  class="form-check-input" id="disabled">
+						<label class="form-check-label" for="disabled">Disabled</label>
+					</div>
+					<div class="col-lg-3">
+						<label for="uuid">UUId</label> 
+						<input type="text" class="form-control" id="uuid" readonly tabindex="-1">
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-xs-12">
+						<label for="urls">Include-/Exclude-URL-Patterns</label>
+						<textarea id="urls" rows="4" class="form-control" placeholder="https://&lt;domain&gt;/*&#10;-https://&lt;domain&gt;/notaffected/*""></textarea>
+						<small id="urlsHelpBlock" class="form-text text-muted">
+							Put every pattern on a separate line. Use "*" as wildcard. For excludes put "-" in front of the pattern.
+						</small>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group col-xs-12">
+						<div class="input-group col-xs-12">
+							<label for="onloadJSCode"><u>J</u>avaScript Code</label>
+							<textarea id="onloadJSCode" rows="10" cols="200"
+								class="form-control col-xs-12" style="height:450px; max-height:450px; white-space: pre;font-family:monospace; overflow-y:scroll"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-xs-12">
+						<button id="saveBtn" class="btn btn-primary"><u>S</u>ave</button>
+						<button id="applyBtn" class="btn btn-secondary"><u>A</u>pply & Test</button>
+						<button id="deleteBtn" class="btn btn-secondary">De<u>l</u>ete</button>
+						<button id="cancelBtn" class="btn btn-secondary"><u>C</u>ancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Model Export Dialog -->
+	<div class="modal fade" id="exportDlg" role="dialog" data-bs-backdrop="false">
+	  <div class="modal-dialog modal-lg"  role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+			  <h4 class="modal-title">Import / Export Scripts</h4>
+			  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	        <div class="container">
+	        	<div class="row">
+	        		<div class="col-xs-12 form-group">
+	        			<div class="input-group col-xs-12">
+	        				<label for="impExpJSON">Copy / Paste the code and save it with an external editor</label>
+				        	<textarea id="impExpJSON" class="col-xs-12" rows="20" cols="100"></textarea>
+				        </div>
+	        		</div>
+	        	</div>
+	        </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button id="importBtnDlg" type="button" class="btn btn-primary">Import</button>
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+    <iframe id="validate-iframe" style="display:none" src="validate_js_code.html"></iframe>
+	<script src="../../lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+0
