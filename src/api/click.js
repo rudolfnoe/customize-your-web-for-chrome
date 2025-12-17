@@ -30,6 +30,10 @@
 
    function performEvent(target, type, modifierMask, button){
       let clickEvent = new MouseEvent(type, {
+         detail: type=="click"?1:2,
+         bubbles: true,
+         cancelable: true,         
+         view: window,
          screenX: 0,
          screenY: 0,
          clientX: 0,
