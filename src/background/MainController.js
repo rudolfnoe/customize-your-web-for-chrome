@@ -19,7 +19,7 @@ const MainController = {
    init: function(){
       chrome.runtime.onInstalled.addListener((details) => {
          console.log("OnInstall: " + details.reason);
-         if (details.reason=='update'){
+         if (details.reason=='update' || details.reason=='install'){
             MainController.registerUserScriptController();   
          }
       });
