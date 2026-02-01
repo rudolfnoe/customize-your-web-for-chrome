@@ -45,6 +45,33 @@
       })
       return target.dispatchEvent(clickEvent)?1:0
    }
-   
-   
+
+   clickOutermost = function(selectorOrElem, opts){
+      let outerMostElem = $(selectorOrElem).get().reduce(function (best, el) {
+               let depth = $(el).parents().length;
+               if (!best) return { el: el, depth: depth };
+               return depth < best.depth ? { el: el, depth: depth } : best;
+            }, 
+            null
+      );
+      click(outerMostElem.el, opts);
+   };
+
+   clickNearest =  function(selectorOrElem, opts){
+      if (!document.activeElement || document.activeElement.tagName.toLowerCase()=='body'){
+            this.clickOutermost(selectorOrElem, opts)
+      }
+      let $start = $(document.activeElement);
+      while($start.get(0).tagName.toLowerCase()!='body'){
+            $nearest = $start.find(selectorOrElem);
+            if($nearest.length>0){
+               $nearest = $nearest.eq(0);
+               break;
+            }
+            $start = $start.parent();
+      }
+      click($nearest.get(0), opts);
+   };
+
+
 })()
